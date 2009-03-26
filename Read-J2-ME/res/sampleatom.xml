@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+<title type="text">Free University of Bolzano - RIS Timetable Feed</title>
+<subtitle type="text">Free University of Bolzano - RIS Timetable Feed</subtitle>
+<id>------</id>
+<rights type="text">Free University of Bolzano</rights>
+<updated>2009-03-26T19:02:19+01:00</updated>
+<logo>http://aws.unibz.it/risweb/images/unibz.gif</logo>
+<author>
+	<name>Free University of Bolzano</name>
+	<uri>http://www.unibz.it/</uri>
+	<email>webmaster@unibz.it</email>
+</author>
+<generator>ICT - Free University of Bolzano</generator>
+<entry>
+	<id>90271</id>
+	<title type="text">26.03.2009 - 08:30-10:30 - Advanced Web Programming (S) LECT</title>
+	<published>2009-02-12T15:04:38+01:00</published>
+	<updated>2009-03-26T19:02:19+01:00</updated>
+	<link rel="alternate" href="https://aws.unibz.it/students-zone/itt/export/exportitt.aspx?showtype=0&amp;sfdid=8AH0NRS5jLgV8wnqirnV0A%3d%3d&amp;format=html&amp;start=26.03.2009&amp;end=26.03.2009" />
+	<content type="text">26.03.2009 - 08:30-10:30 - Advanced Web Programming (S) LECT - Seminar Room, E411, 4th floor, Building E - Venturini Adriano</content>
+</entry>
+<entry>
+	<id>90542</id>
+	<title type="text">26.03.2009 - 15:00-16:00 - Software Quality Management (S) EXERCISE</title>
+	<published>2009-02-13T13:36:03+01:00</published>
+	<updated>2009-03-26T19:02:19+01:00</updated>
+	<link rel="alternate" href="https://aws.unibz.it/students-zone/itt/export/exportitt.aspx?showtype=0&amp;sfdid=8AH0NRS5jLgV8wnqirnV0A%3d%3d&amp;format=html&amp;start=26.03.2009&amp;end=26.03.2009" />
+	<content type="text">26.03.2009 - 15:00-16:00 - Software Quality Management (S) EXERCISE - Seminar Room, E420, 4th floor, Building E - Janes Andrea Alexander</content>
+</entry>
+</feed>
