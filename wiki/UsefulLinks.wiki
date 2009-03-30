@@ -8,3 +8,4 @@ Collection of useful links for the implementation of the project's functionaliti
 = Details =
 
   * Function to resize images: http://www.coderanch.com/t/228899/Java-Micro-Edition/Mobile/we-resize-image-j-me
+  * Sample HttpConnection: http://www.java2s.com/Code/Java/J2ME/HttpConnection.htm
