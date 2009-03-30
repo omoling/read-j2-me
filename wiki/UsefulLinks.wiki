@@ -1,0 +1,10 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+Collection of useful links for the implementation of the project's functionalities.
+
+
+= Details =
+
+  * Function to resize images: http://www.coderanch.com/t/228899/Java-Micro-Edition/Mobile/we-resize-image-j-me
