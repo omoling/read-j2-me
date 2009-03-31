@@ -1,5 +1,7 @@
 package it.unibz.readj2me.view;
 
+import it.unibz.readj2me.ReadJ2ME;
+import it.unibz.readj2me.controller.ImageLoader;
 import it.unibz.readj2me.controller.XmlReader;
 import it.unibz.readj2me.model.NewsItem;
 import java.util.Enumeration;
@@ -11,8 +13,17 @@ import javax.microedition.lcdui.List;
 
 public class ItemList extends List implements CommandListener {
 
-    public ItemList(){
-        super("Title", List.IMPLICIT);
+    private ReadJ2ME parent;
+
+    private Command exitCommand;
+
+    public ItemList(ReadJ2ME parent, String title){
+        super(title, List.IMPLICIT);
+        this.parent = parent;
+
+        exitCommand = new Command("Exit", Command.EXIT, 0);
+        this.addCommand(exitCommand);
+        this.setCommandListener(this);
 
         //test
         XmlReader xmlReader = new XmlReader();
@@ -23,13 +34,15 @@ public class ItemList extends List implements CommandListener {
         Enumeration enumeration = entries.elements();
         while(enumeration.hasMoreElements()){
             item = (NewsItem)enumeration.nextElement();
-            this.append(item.getTitle(), null);
+            this.append(item.getTitle(), ImageLoader.getImage(ImageLoader.DEFAULT_FEED));
         }
         
     }
 
     public void commandAction(Command c, Displayable d) {
-        //
+        if (c == exitCommand){
+            parent.destroyApp(true);
+        }
     }
 
 }
