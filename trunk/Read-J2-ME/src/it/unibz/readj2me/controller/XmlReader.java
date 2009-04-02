@@ -1,5 +1,6 @@
 package it.unibz.readj2me.controller;
 
+import it.unibz.readj2me.model.Feed;
 import it.unibz.readj2me.model.NewsItem;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,32 +23,21 @@ public class XmlReader {
     private final static String TAG_UPDATED = "updated";
     private final static String TAG_LINK = "link";
     private final static String TAG_CONTENT = "content";
+    private final static String TAG_SUMMARY = "summary";
 
-    private InputStream getXMLInputStream() {
-        
-        try {
-            HttpConnection conn = (HttpConnection) Connector.open(XML_URL);
-            conn.setRequestMethod(HttpConnection.GET);
-            conn.setRequestProperty("Content-Type", "//text plain");
-            conn.setRequestProperty("Connection", "close");
+    private Feed feed;
+    private Networking networking;
 
-            if(conn.getResponseCode() == HttpConnection.HTTP_OK){
-                return conn.openInputStream();
-            } else return null;
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
-
-        //return this.getClass().getResourceAsStream(XML_NAME);
+    public XmlReader(Feed feed){
+        this.feed = feed;
+        networking = new Networking();
     }
 
     public Vector getEntries() {
 
         Vector entries = new Vector();
         KXmlParser xmlParser = new KXmlParser();
-        InputStream in = getXMLInputStream();
+        InputStream in = networking.getInputStream(feed.getFeedUrl());
 
         if (in != null) {
             try {
@@ -100,6 +90,9 @@ public class XmlReader {
                 } else if(xmlParser.getName().equals(TAG_CONTENT)){
                     String content = xmlParser.nextText();
                     item.setContent(content);
+                } else if(xmlParser.getName().equals(TAG_SUMMARY)){
+                    String summary = xmlParser.nextText();
+                    item.setSummary(summary);
                 }
             }
 
