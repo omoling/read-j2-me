@@ -10,6 +10,7 @@ public class NewsItem {
     private Date updated;
     private String link;
     private String content;
+    private String summary;
 
     /**
      * @return the title
@@ -93,6 +94,20 @@ public class NewsItem {
      */
     public void setId(String id) {
         this.id = id;
+    }
+
+    /**
+     * @return the summary
+     */
+    public String getSummary() {
+        return summary;
+    }
+
+    /**
+     * @param summary the summary to set
+     */
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
 }
