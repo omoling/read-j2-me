@@ -9,4 +9,4 @@ Collection of useful links for the implementation of the project's functionaliti
 
   * Function to resize images: http://www.coderanch.com/t/228899/Java-Micro-Edition/Mobile/we-resize-image-j-me
   * Sample HttpConnection: http://www.java2s.com/Code/Java/J2ME/HttpConnection.htm
-  * Lwuit Custom Scolling: http://markmail.org/message/alpl5k5e72mb47lx#query:lwuit%20fisheyerenderer+page:1+mid:alpl5k5e72mb47lx+state:results
+  * FishEyeRendering example: http://markmail.org/message/alpl5k5e72mb47lx#query:lwuit%20fisheyerenderer+page:1+mid:alpl5k5e72mb47lx+state:results
