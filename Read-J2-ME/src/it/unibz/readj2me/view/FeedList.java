@@ -12,21 +12,21 @@ import javax.microedition.lcdui.List;
 
 public class FeedList extends List implements CommandListener {
 
-    private ReadJ2ME midlet;
-    private Command exitCommand,  openCommand;
+    private Command exitCommand, openCommand, addFeedCommand;
     private Vector items;
 
-    public FeedList(String title, ReadJ2ME midlet, Displayable parent) {
+    public FeedList(String title, Displayable parent) {
         super(title, List.IMPLICIT);
-        this.midlet = midlet;
         items = new Vector();
 
         exitCommand = new Command("Exit", Command.EXIT, 0);
         openCommand = new Command("Open", Command.OK, 0);
+        addFeedCommand = new Command("Add new Feed", Command.SCREEN, 0);
 
-        this.setCommandListener(this);
         this.addCommand(exitCommand);
         this.addCommand(openCommand);
+        this.addCommand(addFeedCommand);
+        this.setCommandListener(this);
 
         //test
         Feed heiseFeed = new Feed();
@@ -53,11 +53,14 @@ public class FeedList extends List implements CommandListener {
 
     public void commandAction(Command c, Displayable d) {
         if (c == exitCommand) {
-            midlet.destroyApp(true);
+            ReadJ2ME.destroy(true);
+        } else if (c == addFeedCommand) {
+            FeedView feedView = new FeedView(this);
+            ReadJ2ME.showOnDisplay(feedView);
         } else if (c == openCommand || d == this) {
             Feed selectedFeed = (Feed) items.elementAt(this.getSelectedIndex());
-            ItemList list = new ItemList(selectedFeed, midlet, this);
-            midlet.showOnDisplay(list);
+            ItemList list = new ItemList(selectedFeed, this);
+            ReadJ2ME.showOnDisplay(list);
         }
     }
 }

@@ -14,16 +14,14 @@ import javax.microedition.lcdui.List;
 
 public class ItemList extends List implements CommandListener, Runnable {
 
-    private ReadJ2ME midlet;
     private Displayable parent;
     private Feed feed;
     private Vector items;
     XmlReader xmlReader;
     private Command backCommand,  openCommand;
 
-    public ItemList(Feed feed, ReadJ2ME midlet, Displayable parent) {
+    public ItemList(Feed feed, Displayable parent) {
         super(feed.getFeedName(), List.IMPLICIT);
-        this.midlet = midlet;
         this.parent = parent;
         this.feed = feed;
         items = new Vector();
@@ -39,6 +37,7 @@ public class ItemList extends List implements CommandListener, Runnable {
         Thread localThread = new Thread(this);
         localThread.start();
         populateList();
+
     }
 
     private void populateList() {
@@ -57,11 +56,11 @@ public class ItemList extends List implements CommandListener, Runnable {
 
     public void commandAction(Command c, Displayable d) {
         if (c == backCommand) {
-            midlet.showOnDisplay(parent);
+            ReadJ2ME.showOnDisplay(parent);
         } else if (c == openCommand || d == this) {
             NewsItem selectedItem = (NewsItem) items.elementAt(this.getSelectedIndex());
-            ItemView itemView = new ItemView(selectedItem, midlet, this);
-            midlet.showOnDisplay(itemView);
+            ItemView itemView = new ItemView(selectedItem, this);
+            ReadJ2ME.showOnDisplay(itemView);
         }
     }
 }
