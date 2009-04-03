@@ -11,17 +11,15 @@ import javax.microedition.lcdui.StringItem;
 
 public class ItemView extends Form implements CommandListener {
 
-    private ReadJ2ME midlet;
     private Displayable parent;
     private NewsItem newsItem;
     private Command backCommand;
     private StringItem contentItem;
     private StringItem summaryItem;
 
-    public ItemView(NewsItem newsItem, ReadJ2ME midlet, Displayable parent) {
+    public ItemView(NewsItem newsItem, Displayable parent) {
         super(newsItem.getTitle());
         this.newsItem = newsItem;
-        this.midlet = midlet;
         this.parent = parent;
 
         backCommand = new Command("Back", Command.BACK, 0);
@@ -49,7 +47,7 @@ public class ItemView extends Form implements CommandListener {
 
     public void commandAction(Command c, Displayable d) {
         if (c == backCommand) {
-            midlet.showOnDisplay(parent);
+            ReadJ2ME.showOnDisplay(parent);
         }
     }
 }
