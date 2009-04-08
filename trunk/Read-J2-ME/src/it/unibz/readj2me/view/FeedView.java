@@ -1,12 +1,15 @@
 package it.unibz.readj2me.view;
 
 import it.unibz.readj2me.ReadJ2ME;
+import it.unibz.readj2me.controller.PersistentManager;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.TextField;
+import javax.microedition.rms.RecordStoreException;
+import javax.microedition.rms.RecordStoreFullException;
 
 public class FeedView extends Form implements CommandListener{
 
@@ -26,9 +29,11 @@ public class FeedView extends Form implements CommandListener{
         this.addCommand(saveCommand);
         this.setCommandListener(this);
 
-        feedNameField = new TextField("Name", null, 20, TextField.ANY);
+        feedNameField = new TextField("Name", "heise mobil atom", 30, TextField.ANY);
         feedNameField.setLayout(Item.LAYOUT_LEFT);
-        feedUrlField = new TextField("Url", null, 20, TextField.ANY);
+        feedUrlField = new TextField("Url", null, 100, TextField.URL);
+        feedUrlField.setString("http://www.heise.de/security/news/news-atom.xml");
+        //feedUrlField.setString("aaa");
         feedUrlField.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
         feedUrlField.setLayout(Item.LAYOUT_LEFT);
         this.append(feedNameField);
@@ -37,11 +42,12 @@ public class FeedView extends Form implements CommandListener{
     }
 
     public void commandAction(Command c, Displayable d) {
-        if (c == backCommand){
+        if (c == backCommand) {
             ReadJ2ME.showOnDisplay(parent);
-        } else if (c == saveCommand){
-            //TODO
-            System.out.print("************************ TODO ***************");
+        } else if (c == saveCommand) {
+            PersistentManager.getInstance().addFeed( feedNameField.getString(), feedUrlField.getString());
+            ((FeedList)parent).refershList();
+            ReadJ2ME.showOnDisplay(parent);
         }
     }
     

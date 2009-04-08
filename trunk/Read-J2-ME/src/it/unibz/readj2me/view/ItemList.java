@@ -21,7 +21,7 @@ public class ItemList extends List implements CommandListener, Runnable {
     private Command backCommand,  openCommand;
 
     public ItemList(Feed feed, Displayable parent) {
-        super(feed.getFeedName(), List.IMPLICIT);
+        super(feed.getName(), List.IMPLICIT);
         this.parent = parent;
         this.feed = feed;
         items = new Vector();

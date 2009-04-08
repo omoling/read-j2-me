@@ -2,35 +2,50 @@ package it.unibz.readj2me.model;
 
 public class Feed {
 
-    private String feedUrl;
-    private String feedName;
+    private String url;
+    private String name;
+    private String itemsRecordStoreName;
 
     /**
      * @return the feedUrl
      */
-    public String getFeedUrl() {
-        return feedUrl;
+    public String getUrl() {
+        return url;
     }
 
     /**
      * @param feedUrl the feedUrl to set
      */
-    public void setFeedUrl(String feedUrl) {
-        this.feedUrl = feedUrl;
+    public void setUrl(String feedUrl) {
+        this.url = feedUrl;
     }
 
     /**
      * @return the feedName
      */
-    public String getFeedName() {
-        return feedName;
+    public String getName() {
+        return name;
     }
 
     /**
      * @param feedName the feedName to set
      */
-    public void setFeedName(String feedName) {
-        this.feedName = feedName;
+    public void setName(String feedName) {
+        this.name = feedName;
+    }
+
+    /**
+     * @return the recordStoreName
+     */
+    public String getItemsRecordStoreName() {
+        return itemsRecordStoreName;
+    }
+
+    /**
+     * @param recordStoreName the recordStoreName to set
+     */
+    public void setItemsRecordStoreName(String recordStoreName) {
+        this.itemsRecordStoreName = recordStoreName;
     }
 
 }
