@@ -37,7 +37,7 @@ public class XmlReader {
 
         Vector entries = new Vector();
         KXmlParser xmlParser = new KXmlParser();
-        InputStream in = networking.getInputStream(feed.getFeedUrl());
+        InputStream in = networking.getInputStream(feed.getUrl());
 
         if (in != null) {
             try {

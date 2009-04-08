@@ -14,7 +14,7 @@ public class ReadJ2ME extends MIDlet {
     public void startApp() {
         instance = this;
         this.display = Display.getDisplay(this);
-        FeedList feedList = new FeedList("My Feeds", null);
+        FeedList feedList = new FeedList("Read-J2-Me", null);
         showOnDisplay(feedList);
     }
 
