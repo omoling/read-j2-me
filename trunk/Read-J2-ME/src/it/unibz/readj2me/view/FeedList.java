@@ -15,6 +15,7 @@ import javax.microedition.rms.RecordStoreException;
 public class FeedList extends List implements CommandListener {
 
     private Command exitCommand, openCommand, addFeedCommand, deleteFeedCommand;
+    private Command eraseRSCommand, listRSCommand;
     private Vector items;
 
     public FeedList(String title, Displayable parent) {
@@ -25,11 +26,15 @@ public class FeedList extends List implements CommandListener {
         openCommand = new Command("Open", Command.SCREEN, 0);
         addFeedCommand = new Command("Add new Feed", Command.SCREEN, 1);
         deleteFeedCommand = new Command("Delete Feed", Command.SCREEN, 2);
+        eraseRSCommand = new Command("Erase RS", Command.SCREEN, 5);
+        listRSCommand = new Command("List RS", Command.SCREEN, 4);
 
         this.addCommand(exitCommand);
         this.addCommand(openCommand);
         this.addCommand(addFeedCommand);
         this.addCommand(deleteFeedCommand);
+        this.addCommand(eraseRSCommand);
+        this.addCommand(listRSCommand);
         this.setCommandListener(this);
 
         //test
@@ -44,11 +49,11 @@ public class FeedList extends List implements CommandListener {
         items.addElement(heiseFeed2);
         */
         
-        refershList();
+        refreshList();
 
     }
 
-    public void refershList() {
+    public void refreshList() {
         //test
         //Enumeration enumeration = this.items.elements();
 
@@ -58,21 +63,18 @@ public class FeedList extends List implements CommandListener {
         PersistentManager pm = PersistentManager.getInstance();
         Enumeration enumeration;
 
-        //TODO: handle exceptions: show view or alert
         //TODO: put in items and show by iterating items?
         try {
             enumeration = pm.loadFeeds().elements();
             while (enumeration.hasMoreElements()) {
-            Feed feed = (Feed) enumeration.nextElement();
-            items.addElement(feed);
-            this.append(feed.getName(), ImageLoader.getImage(ImageLoader.DEFAULT_FEED));
-        }
+                Feed feed = (Feed) enumeration.nextElement();
+                items.addElement(feed);
+                this.append(feed.getName(), ImageLoader.getImage(ImageLoader.DEFAULT_FEED));
+            }
         } catch (RecordStoreException ex) {
-            //TODO
-            //ex.printStackTrace();
+            new Warning("Error", "Some error while loading occurred..").show();
         } catch (Exception ex) {
-            //TODO
-            //ex.printStackTrace();
+            new Warning("Error", "Some error occurred..").show();
         }
 
     }
@@ -88,12 +90,18 @@ public class FeedList extends List implements CommandListener {
 
             //TODO remove manually single removed element?
             PersistentManager.getInstance().removeFeed(selectedFeed);
-            refershList();
-            
+            refreshList();
+        } else if (c == listRSCommand) {
+            //TODO: to be removed after development
+            PersistentManager.getInstance().listRS();
+        } else if (c == eraseRSCommand){
+            //TODO: to be removed after development
+            PersistentManager.getInstance().eraseRS();
+            refreshList();
         } else if (c == openCommand || d == this) {
             Feed selectedFeed = (Feed) items.elementAt(this.getSelectedIndex());
             ItemList list = new ItemList(selectedFeed, this);
             ReadJ2ME.showOnDisplay(list);
-        }
+        } 
     }
 }

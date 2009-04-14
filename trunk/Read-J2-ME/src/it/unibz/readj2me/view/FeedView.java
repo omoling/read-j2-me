@@ -8,8 +8,6 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.TextField;
-import javax.microedition.rms.RecordStoreException;
-import javax.microedition.rms.RecordStoreFullException;
 
 public class FeedView extends Form implements CommandListener{
 
@@ -33,7 +31,6 @@ public class FeedView extends Form implements CommandListener{
         feedNameField.setLayout(Item.LAYOUT_LEFT);
         feedUrlField = new TextField("Url", null, 100, TextField.URL);
         feedUrlField.setString("http://www.heise.de/security/news/news-atom.xml");
-        //feedUrlField.setString("aaa");
         feedUrlField.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
         feedUrlField.setLayout(Item.LAYOUT_LEFT);
         this.append(feedNameField);
@@ -45,8 +42,8 @@ public class FeedView extends Form implements CommandListener{
         if (c == backCommand) {
             ReadJ2ME.showOnDisplay(parent);
         } else if (c == saveCommand) {
-            PersistentManager.getInstance().addFeed( feedNameField.getString(), feedUrlField.getString());
-            ((FeedList)parent).refershList();
+            PersistentManager.getInstance().addFeed(feedNameField.getString(), feedUrlField.getString());
+            ((FeedList)parent).refreshList();
             ReadJ2ME.showOnDisplay(parent);
         }
     }
