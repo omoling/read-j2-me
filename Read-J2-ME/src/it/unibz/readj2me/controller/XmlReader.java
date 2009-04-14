@@ -25,19 +25,25 @@ public class XmlReader {
     private final static String TAG_CONTENT = "content";
     private final static String TAG_SUMMARY = "summary";
 
-    private Feed feed;
     private Networking networking;
+    private static XmlReader xmlReader = null;
 
-    public XmlReader(Feed feed){
-        this.feed = feed;
+    private XmlReader(){
         networking = new Networking();
     }
 
-    public Vector getEntries() {
+    public static XmlReader getInstance(){
+        if (xmlReader == null){
+            xmlReader = new XmlReader();
+        }
+        return xmlReader;
+    }
+
+    public Vector getEntries(String feedUrl) {
 
         Vector entries = new Vector();
         KXmlParser xmlParser = new KXmlParser();
-        InputStream in = networking.getInputStream(feed.getUrl());
+        InputStream in = networking.getInputStream(feedUrl);
 
         if (in != null) {
             try {

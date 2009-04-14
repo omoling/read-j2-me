@@ -4,13 +4,13 @@ import java.util.Date;
 
 public class NewsItem {
 
-    private String id;
-    private String title;
+    private String id = "";
+    private String title = "";
     private Date published;
     private Date updated;
-    private String link;
-    private String content;
-    private String summary;
+    private String link = "";
+    private String content = "";
+    private String summary = "";
 
     /**
      * @return the title
