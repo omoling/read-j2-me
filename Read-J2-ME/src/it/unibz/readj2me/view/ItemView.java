@@ -7,15 +7,18 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
+import javax.microedition.lcdui.ItemCommandListener;
 import javax.microedition.lcdui.StringItem;
 
-public class ItemView extends Form implements CommandListener {
+public class ItemView extends Form implements CommandListener, ItemCommandListener {
 
     private Displayable parent;
     private NewsItem newsItem;
-    private Command backCommand;
+    private Command backCommand, openLinkCommand;
+    private StringItem titleItem;
     private StringItem contentItem;
     private StringItem summaryItem;
+    private StringItem linkItem;
 
     public ItemView(NewsItem newsItem, Displayable parent) {
         super(newsItem.getTitle());
@@ -31,23 +34,43 @@ public class ItemView extends Form implements CommandListener {
     }
 
     private void populateView() {
-        if (newsItem.getContent() != null) {
+        if (newsItem.getTitle() != null && !newsItem.getTitle().equals("")){
+            titleItem = new StringItem(null, newsItem.getTitle());
+            titleItem.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
+            titleItem.setLayout(Item.LAYOUT_LEFT);
+            this.append(titleItem);
+        }
+        if (newsItem.getContent() != null && !newsItem.getContent().equals("")) {
             contentItem = new StringItem(null, newsItem.getContent());
             contentItem.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
             contentItem.setLayout(Item.LAYOUT_LEFT);
             this.append(contentItem);
         }
-        if (newsItem.getSummary() != null) {
+        if (newsItem.getSummary() != null && !newsItem.getSummary().equals("")) {
             summaryItem = new StringItem(null, newsItem.getSummary());
             summaryItem.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
             summaryItem.setLayout(Item.LAYOUT_LEFT);
             this.append(summaryItem);
+        }
+        if (newsItem.getLink() != null && !newsItem.getLink().equals("")) {
+            linkItem = new StringItem(null, "Link");
+            linkItem.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
+            linkItem.setLayout(Item.LAYOUT_LEFT);
+            openLinkCommand = new Command("Browse", Command.OK, 0);
+            linkItem.addCommand(openLinkCommand);
+            this.append(linkItem);
         }
     }
 
     public void commandAction(Command c, Displayable d) {
         if (c == backCommand) {
             ReadJ2ME.showOnDisplay(parent);
+        }
+    }
+
+    public void commandAction(Command c, Item item) {
+        if (item == linkItem && c == openLinkCommand){
+            ReadJ2ME.platReq(newsItem.getLink());
         }
     }
 }

@@ -1,6 +1,7 @@
 package it.unibz.readj2me;
 
 import it.unibz.readj2me.view.FeedList;
+import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.*;
@@ -32,6 +33,14 @@ public class ReadJ2ME extends MIDlet {
 
     public static void destroy(boolean unconditional){
         instance.destroyApp(unconditional);
+    }
+
+    public static void platReq(String url){
+        try {
+            instance.platformRequest(url);
+        } catch (ConnectionNotFoundException ex) {
+            //nothing to do
+        }
     }
     
 }

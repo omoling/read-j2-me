@@ -12,6 +12,7 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
+import javax.microedition.lcdui.Ticker;
 import javax.microedition.rms.RecordStoreException;
 
 public class ItemList extends List implements CommandListener, Runnable {
@@ -62,10 +63,13 @@ public class ItemList extends List implements CommandListener, Runnable {
     }
 
     public void run() {
+        Ticker updateTicker = new Ticker("updating..");
+        this.setTicker(updateTicker);
         xmlReader = XmlReader.getInstance();
         Vector newItems = xmlReader.getEntries(feed.getUrl());
         PersistentManager.getInstance().addNewsItems(feed.getItemsRecordStoreName(), newItems);
         updateList();
+        this.setTicker(null);
     }
 
     public void commandAction(Command c, Displayable d) {
