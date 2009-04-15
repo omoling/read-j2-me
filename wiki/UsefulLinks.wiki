@@ -10,3 +10,5 @@ Collection of useful links for the implementation of the project's functionaliti
   * Function to resize images: http://www.coderanch.com/t/228899/Java-Micro-Edition/Mobile/we-resize-image-j-me
   * Sample HttpConnection: http://www.java2s.com/Code/Java/J2ME/HttpConnection.htm
   * FishEyeRendering example: http://markmail.org/message/alpl5k5e72mb47lx#query:lwuit%20fisheyerenderer+page:1+mid:alpl5k5e72mb47lx+state:results
+  * Atom-Date specification: http://www.faqs.org/rfcs/rfc3339.html
+  * Java-parsing class for RFC3339 dates: http://hatori42.com/RFC3339Date.txt
