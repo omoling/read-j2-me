@@ -15,6 +15,10 @@ import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.Ticker;
 import javax.microedition.rms.RecordStoreException;
 
+/**
+ *
+ * @author Anton Dignoes, Omar Moling
+ */
 public class ItemList extends List implements CommandListener, Runnable {
 
     private Displayable parent;
@@ -32,10 +36,12 @@ public class ItemList extends List implements CommandListener, Runnable {
         backCommand = new Command("Back", Command.BACK, 0);
         openCommand = new Command("Open", Command.SCREEN, 0);
         updateCommand = new Command("Update", Command.SCREEN, 1);
+        
         this.addCommand(backCommand);
         this.addCommand(openCommand);
         this.addCommand(updateCommand);
         this.setCommandListener(this);
+        
         updateList();
     }
 
@@ -64,11 +70,13 @@ public class ItemList extends List implements CommandListener, Runnable {
 
     public void run() {
         Ticker updateTicker = new Ticker("updating..");
+
         this.setTicker(updateTicker);
         xmlReader = XmlReader.getInstance();
         Vector newItems = xmlReader.getEntries(feed.getUrl());
-        PersistentManager.getInstance().addNewsItems(feed.getItemsRecordStoreName(), newItems);
+        PersistentManager.getInstance().addNewsItems(feed, newItems);
         updateList();
+
         this.setTicker(null);
     }
 

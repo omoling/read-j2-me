@@ -6,6 +6,10 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.*;
 
+/**
+ *
+ * @author Anton Dignoes, Omar Moling
+ */
 public class ReadJ2ME extends MIDlet {
 
     private Display display;

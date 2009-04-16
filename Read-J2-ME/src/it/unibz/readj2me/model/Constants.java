@@ -1,5 +1,9 @@
 package it.unibz.readj2me.model;
 
+/**
+ *
+ * @author Anton Dignoes, Omar Moling
+ */
 public class Constants {
 
     public static final char FIELD_SEPARATOR = '|';

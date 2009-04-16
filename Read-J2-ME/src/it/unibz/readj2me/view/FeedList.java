@@ -12,6 +12,10 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 import javax.microedition.rms.RecordStoreException;
 
+/**
+ *
+ * @author Anton Dignoes, Omar Moling
+ */
 public class FeedList extends List implements CommandListener {
 
     private Command exitCommand, openCommand, addFeedCommand, deleteFeedCommand;

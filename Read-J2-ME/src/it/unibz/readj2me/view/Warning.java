@@ -4,8 +4,11 @@ import it.unibz.readj2me.ReadJ2ME;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 
+/**
+ *
+ * @author Anton Dignoes, Omar Moling
+ */
 public class Warning extends Alert {
-    
     
     public Warning(String title, String text){
         super(title, text, null, AlertType.WARNING);

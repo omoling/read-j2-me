@@ -1,16 +1,16 @@
 package it.unibz.readj2me.controller;
 
-import it.unibz.readj2me.model.Feed;
 import it.unibz.readj2me.model.NewsItem;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.Vector;
-import javax.microedition.io.Connector;
-import javax.microedition.io.HttpConnection;
 import org.kxml2.io.*;
 import org.xmlpull.v1.*;
 
+/**
+ *
+ * @author Anton Dignoes, Omar Moling
+ */
 public class XmlReader {
 
     private final static String XML_NAME = "/sampleatom.xml";
@@ -88,10 +88,13 @@ public class XmlReader {
                 } else if (xmlParser.getName().equals(TAG_TITLE)) {
                     String title = xmlParser.nextText();
                     item.setTitle(title);
-                }
-                //TODO: get summary, published-date and updated-date
-                
-                  else if(xmlParser.getName().equals(TAG_LINK)){
+                } else if (xmlParser.getName().equals(TAG_PUBLISHED)) {
+                    String published = xmlParser.nextText();
+                    item.setPublished(published);
+                } else if (xmlParser.getName().equals(TAG_UPDATED)) {
+                    String updated = xmlParser.nextText();
+                    item.setUpdated(updated);
+                } else if(xmlParser.getName().equals(TAG_LINK)){
                     item.setLink(xmlParser.getAttributeValue(null, "href"));
                 } else if(xmlParser.getName().equals(TAG_CONTENT)){
                     String content = xmlParser.nextText();

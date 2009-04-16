@@ -5,6 +5,10 @@ import java.io.InputStream;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 
+/**
+ *
+ * @author Anton Dignoes, Omar Moling
+ */
 public class Networking {
 
     public Networking(){

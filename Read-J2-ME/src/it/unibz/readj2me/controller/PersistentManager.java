@@ -7,12 +7,15 @@ import java.util.Enumeration;
 import java.util.Random;
 import java.util.Vector;
 import javax.microedition.rms.RecordEnumeration;
-import javax.microedition.rms.RecordFilter;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 
+/**
+ *
+ * @author Anton Dignoes, Omar Moling
+ */
 public class PersistentManager {
 
     public static PersistentManager persistentManager = null;
@@ -77,7 +80,7 @@ public class PersistentManager {
         RecordStore rs = RecordStore.openRecordStore(rsName, false);
         Vector items = new Vector();
 
-        RecordEnumeration re = rs.enumerateRecords(null, null, false);
+        RecordEnumeration re = rs.enumerateRecords(null, new NewsItemComparator(), false);
         byte[] rawRecord;
         while(re.hasNextElement()) {
             rawRecord = re.nextRecord();
@@ -88,18 +91,24 @@ public class PersistentManager {
         return items;
     }
 
-    public void addNewsItems(String rsName, Vector items) {
+    public void addNewsItems(Feed feed, Vector items) {
         RecordStore rs;
         try {
-            rs = RecordStore.openRecordStore(rsName, true);
+            rs = RecordStore.openRecordStore(feed.getItemsRecordStoreName(), true);
+
+            boolean changed = false;
 
             Enumeration enumeration = items.elements();
             NewsItem item;
             while(enumeration.hasMoreElements()){
                 item = (NewsItem)enumeration.nextElement();
-                byte[] row = item.getBytes();
-                rs.addRecord(row, 0, row.length);
+                if(!feed.getKnownIds().contains(item.getId())){
+                    byte[] row = item.getBytes();
+                    rs.addRecord(row, 0, row.length);
+                    feed.getKnownIds().addElement(item.getId());
+                }
             }
+
 
             rs.closeRecordStore();
             
@@ -186,25 +195,6 @@ public class PersistentManager {
         }
     }
 
-    protected class FeedFilter implements RecordFilter {
-
-        private String urlToCheck;
-
-        public FeedFilter(String url){
-            this.urlToCheck = url;
-        }
-
-        public boolean matches(byte[] candidate) {
-            Feed feed = new Feed(candidate);
-            if(feed.getUrl().equals(urlToCheck)){
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-    }
-    
 }
 
 
