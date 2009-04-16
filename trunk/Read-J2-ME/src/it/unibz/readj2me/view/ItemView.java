@@ -10,6 +10,10 @@ import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemCommandListener;
 import javax.microedition.lcdui.StringItem;
 
+/**
+ *
+ * @author Anton Dignoes, Omar Moling
+ */
 public class ItemView extends Form implements CommandListener, ItemCommandListener {
 
     private Displayable parent;

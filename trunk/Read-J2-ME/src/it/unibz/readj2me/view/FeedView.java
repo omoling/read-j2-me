@@ -9,6 +9,10 @@ import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.TextField;
 
+/**
+ *
+ * @author Anton Dignoes, Omar Moling
+ */
 public class FeedView extends Form implements CommandListener{
 
     private Displayable parent;
@@ -17,7 +21,7 @@ public class FeedView extends Form implements CommandListener{
     private Command backCommand, saveCommand;
 
     public FeedView(Displayable parent){
-        super("title");
+        super("Add a new feed");
         this.parent = parent;
 
         backCommand = new Command("Back", Command.BACK, 0);
@@ -30,7 +34,7 @@ public class FeedView extends Form implements CommandListener{
         feedNameField = new TextField("Name", "heise mobil atom", 30, TextField.ANY);
         feedNameField.setLayout(Item.LAYOUT_LEFT);
         feedUrlField = new TextField("Url", null, 100, TextField.URL);
-        feedUrlField.setString("http://www.heise.de/security/news/news-atom.xml");
+        feedUrlField.setString("http://www.heise.de/mobil/newsticker/heise-atom.xml");
         feedUrlField.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
         feedUrlField.setLayout(Item.LAYOUT_LEFT);
         this.append(feedNameField);
