@@ -93,7 +93,7 @@ public class FeedList extends List implements CommandListener {
             Feed selectedFeed = (Feed) items.elementAt(this.getSelectedIndex());
 
             //TODO remove manually single removed element?
-            PersistentManager.getInstance().removeFeed(selectedFeed);
+            PersistentManager.getInstance().removeFeed(selectedFeed, true);
             refreshList();
         } else if (c == listRSCommand) {
             //TODO: to be removed after development
