@@ -63,12 +63,13 @@ public class PersistentManager {
         RecordStore rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, false);
         Vector items = new Vector();
 
+        //TODO: feed ordering..
         RecordEnumeration re = rs.enumerateRecords(null, null, false);
         byte[] rawRecord;
         while(re.hasNextElement()){
             rawRecord = re.nextRecord();
             items.addElement(new Feed(rawRecord));
-            //TODO handle parsing exception: delete record
+            //TODO handle parsing exception.. delete record?
         }
 
         rs.closeRecordStore();
@@ -96,7 +97,7 @@ public class PersistentManager {
         try {
             rs = RecordStore.openRecordStore(feed.getItemsRecordStoreName(), true);
 
-            boolean changed = false;
+            boolean feedChanged = false;
 
             Enumeration enumeration = items.elements();
             NewsItem item;
@@ -106,11 +107,15 @@ public class PersistentManager {
                     byte[] row = item.getBytes();
                     rs.addRecord(row, 0, row.length);
                     feed.getKnownIds().addElement(item.getId());
+                    feedChanged = true;
                 }
             }
-
-
             rs.closeRecordStore();
+
+            if(feedChanged){
+                //update feed on RS (delete and rewrite it)
+                updateFeed(feed);
+            }
             
         } catch (RecordStoreFullException ex) {
             ex.printStackTrace();
@@ -121,6 +126,11 @@ public class PersistentManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void updateFeed(Feed feed){
+        removeFeed(feed, false);
+        addFeed(feed);
     }
 
     public void addFeed(String name, String url) {
@@ -140,7 +150,20 @@ public class PersistentManager {
 
     }
 
-    public void removeFeed(Feed feed) {
+    public void addFeed(Feed feed) {
+        try {
+            RecordStore rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, true);
+            byte[] row = feed.getBytes();
+            rs.addRecord(row, 0, row.length);
+            rs.closeRecordStore();
+        } catch (RecordStoreFullException ex) {
+            ex.printStackTrace();
+        } catch (RecordStoreException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void removeFeed(Feed feed, boolean removeItemsRecordStore) {
         RecordStore rs;
         try {
             rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, false);
@@ -151,8 +174,11 @@ public class PersistentManager {
                 rs.deleteRecord(re.nextRecordId());
             }
 
-            RecordStore.deleteRecordStore(feed.getItemsRecordStoreName());
             rs.closeRecordStore();
+
+            if(removeItemsRecordStore){
+                RecordStore.deleteRecordStore(feed.getItemsRecordStoreName());
+            }
             
         } catch (RecordStoreFullException ex) {
             ex.printStackTrace();
