@@ -13,6 +13,7 @@ public class NewsItem {
     private String link = "";
     private String content = "";
     private String summary = "";
+    private boolean read = false;
 
     public NewsItem(){
     }
@@ -36,10 +37,19 @@ public class NewsItem {
         sb.append(updated);
         sb.append(Constants.FIELD_SEPARATOR);
         sb.append(published);
+        sb.append(Constants.FIELD_SEPARATOR);
+        if(read){
+            sb.append("1");
+        } else {
+            sb.append("0");
+        }
         return sb.toString().getBytes();
     }
 
     private void createFromBytes(byte[] recordData){
+
+        //TODO: check when unable to parse!!
+
         String recordString = new String(recordData);
         int index1, index2;
         index1 = recordString.indexOf(Constants.FIELD_SEPARATOR);
@@ -60,7 +70,14 @@ public class NewsItem {
         updated = recordString.substring(index1 + 1, index2);
         index1 = index2;
         index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
-        published = recordString.substring(index1 + 1, recordString.length());
+        published = recordString.substring(index1 + 1, index2);
+        index1 = index2;
+        String tempRead = recordString.substring(index1 + 1, recordString.length());
+        if(tempRead.equals("1")){
+            read = true;
+        } else {
+            read = false;
+        }
     }
 
     /**
@@ -159,6 +176,20 @@ public class NewsItem {
      */
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    /**
+     * @return the read
+     */
+    public boolean isRead() {
+        return read;
+    }
+
+    /**
+     * @param read the read to set
+     */
+    public void setRead(boolean read) {
+        this.read = read;
     }
 
 }
