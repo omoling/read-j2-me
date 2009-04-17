@@ -8,9 +8,11 @@ import it.unibz.readj2me.model.Feed;
 import it.unibz.readj2me.model.NewsItem;
 import java.util.Enumeration;
 import java.util.Vector;
+import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.Ticker;
 import javax.microedition.rms.RecordStoreException;
@@ -41,7 +43,8 @@ public class ItemList extends List implements CommandListener, Runnable {
         this.addCommand(openCommand);
         this.addCommand(updateCommand);
         this.setCommandListener(this);
-        
+
+        this.setFitPolicy(Choice.TEXT_WRAP_OFF);
         updateList();
     }
 
@@ -61,11 +64,26 @@ public class ItemList extends List implements CommandListener, Runnable {
         }
 
         NewsItem item;
+        items.trimToSize();
         Enumeration enumeration = items.elements();
         while (enumeration.hasMoreElements()) {
             item = (NewsItem) enumeration.nextElement();
-            this.append(item.getTitle(), ImageLoader.getImage(ImageLoader.DEFAULT_FEED));
+            if(item.isRead()){
+                this.append(item.getTitle(), ImageLoader.getImage(ImageLoader.GREY_FEED));
+            } else {
+                this.append(item.getTitle(), ImageLoader.getImage(ImageLoader.DEFAULT_FEED));
+            }
         }
+
+        //set bold-font if unread
+        for(int i = 0; i < this.size(); i++){
+            item = (NewsItem) items.elementAt(i);
+
+            if(!item.isRead()){
+                this.setFont(i, Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
+            }
+        }
+        item = null;
     }
 
     public void run() {
@@ -88,8 +106,12 @@ public class ItemList extends List implements CommandListener, Runnable {
             updateThread.start();
         } else if (c == openCommand || d == this) {
             int index = this.getSelectedIndex();
-            if(index >= 0){
+            if (index >= 0) {
                 NewsItem selectedItem = (NewsItem) items.elementAt(index);
+                if (!selectedItem.isRead()) {
+                    this.setFont(index, Font.getDefaultFont());
+                    this.set(index, selectedItem.getTitle(), ImageLoader.getImage(ImageLoader.GREY_FEED));
+                }
                 ItemView itemView = new ItemView(selectedItem, this);
                 ReadJ2ME.showOnDisplay(itemView);
             } else {
@@ -97,4 +119,9 @@ public class ItemList extends List implements CommandListener, Runnable {
             }
         }
     }
+
+    public String getFeedsItemsRecordStoreName(){
+        return feed.getItemsRecordStoreName();
+    }
+
 }

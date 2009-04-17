@@ -3,6 +3,7 @@ package it.unibz.readj2me.controller;
 import it.unibz.readj2me.model.Constants;
 import it.unibz.readj2me.model.Feed;
 import it.unibz.readj2me.model.NewsItem;
+import it.unibz.readj2me.view.Warning;
 import java.util.Enumeration;
 import java.util.Random;
 import java.util.Vector;
@@ -113,7 +114,6 @@ public class PersistentManager {
             rs.closeRecordStore();
 
             if(feedChanged){
-                //update feed on RS (delete and rewrite it)
                 updateFeed(feed);
             }
             
@@ -128,7 +128,13 @@ public class PersistentManager {
         }
     }
 
+    public void updateNewsItem(NewsItem item, String rsName){
+        removeNewsItem(item, rsName);
+        addNewsItem(item, rsName);
+    }
+
     public void updateFeed(Feed feed){
+        //update feed on RS (delete and rewrite it)
         removeFeed(feed, false);
         addFeed(feed);
     }
@@ -144,8 +150,10 @@ public class PersistentManager {
             rs.closeRecordStore();
         } catch (RecordStoreFullException ex) {
             ex.printStackTrace();
+            new Warning("adding feed", ex.getMessage()).show();
         } catch (RecordStoreException ex) {
             ex.printStackTrace();
+            new Warning("adding feed", ex.getMessage()).show();
         }
 
     }
@@ -158,6 +166,44 @@ public class PersistentManager {
             rs.closeRecordStore();
         } catch (RecordStoreFullException ex) {
             ex.printStackTrace();
+        } catch (RecordStoreException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void addNewsItem(NewsItem item, String rsName){
+        try {
+            RecordStore rs = RecordStore.openRecordStore(rsName, false);
+            byte[] row = item.getBytes();
+            rs.addRecord(row, 0, row.length);
+            rs.closeRecordStore();
+        } catch (RecordStoreFullException ex) {
+            ex.printStackTrace();
+        } catch (RecordStoreNotFoundException ex) {
+            //nothing
+        } catch (RecordStoreException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void removeNewsItem(NewsItem item, String rsName){
+        RecordStore rs;
+        try{
+            rs = RecordStore.openRecordStore(rsName, false);
+            RecordEnumeration re = rs.enumerateRecords(new NewsItemFilter(item.getId()), null, false);
+
+            while (re.hasNextElement()) {
+                rs.deleteRecord(re.nextRecordId());
+            }
+
+            rs.closeRecordStore();
+
+        } catch (RecordStoreFullException ex) {
+            ex.printStackTrace();
+            return;
+        } catch (RecordStoreNotFoundException ex) {
+            // nothing..
+            return;
         } catch (RecordStoreException ex) {
             ex.printStackTrace();
         }
@@ -189,7 +235,6 @@ public class PersistentManager {
         } catch (RecordStoreException ex) {
             ex.printStackTrace();
         }
-
     }
 
 

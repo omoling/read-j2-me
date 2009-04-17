@@ -1,6 +1,7 @@
 package it.unibz.readj2me.view;
 
 import it.unibz.readj2me.ReadJ2ME;
+import it.unibz.readj2me.controller.PersistentManager;
 import it.unibz.readj2me.model.NewsItem;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
@@ -35,6 +36,15 @@ public class ItemView extends Form implements CommandListener, ItemCommandListen
         this.setCommandListener(this);
 
         populateView();
+        checkItemUpdate();
+    }
+
+    private void checkItemUpdate() {
+        if(!newsItem.isRead()){
+            newsItem.setRead(true);
+            String rsName = ((ItemList)parent).getFeedsItemsRecordStoreName();
+            PersistentManager.getInstance().updateNewsItem(newsItem, rsName);
+        }
     }
 
     private void populateView() {
