@@ -33,7 +33,7 @@ public class FeedView extends Form implements CommandListener{
 
         feedNameField = new TextField("Name", "heise mobil atom", 30, TextField.ANY);
         feedNameField.setLayout(Item.LAYOUT_LEFT);
-        feedUrlField = new TextField("Url", null, 100, TextField.URL);
+        feedUrlField = new TextField("Url", null,300, TextField.URL);
         feedUrlField.setString("http://www.heise.de/mobil/newsticker/heise-atom.xml");
         feedUrlField.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
         feedUrlField.setLayout(Item.LAYOUT_LEFT);
