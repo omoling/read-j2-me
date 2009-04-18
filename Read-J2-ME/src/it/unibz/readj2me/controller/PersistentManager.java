@@ -32,14 +32,14 @@ public class PersistentManager {
     }
 
     public String getRandomRecordStoreName() throws RecordStoreFullException, RecordStoreException {
-        Random generator = new Random();
-        
         int i;
         String name;
 
+        Random generator = new Random();
+        
         //find an unused name
         do {
-            i = generator.nextInt(1000000);
+            i = Math.abs(generator.nextInt()) % 10000;
             name = Constants.RS_PREFIX + "" + i;
         } while(!isNameFree(name));
 
@@ -52,8 +52,11 @@ public class PersistentManager {
 
     private boolean isNameFree(String name) {
         String[] names = RecordStore.listRecordStores();
+        if(names == null) { 
+            return true;
+        }
         for(int i = 0; i < names.length; i++){
-            if (names[i].equals(name)){
+            if (names[i] != null && names[i].equals(name)){
                 return false;
             }
         }
@@ -64,8 +67,7 @@ public class PersistentManager {
         RecordStore rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, false);
         Vector items = new Vector();
 
-        //TODO: feed ordering..
-        RecordEnumeration re = rs.enumerateRecords(null, null, false);
+        RecordEnumeration re = rs.enumerateRecords(null, new FeedComparator(), false);
         byte[] rawRecord;
         while(re.hasNextElement()){
             rawRecord = re.nextRecord();
@@ -116,7 +118,8 @@ public class PersistentManager {
             if(feedChanged){
                 updateFeed(feed);
             }
-            
+
+        //TODO
         } catch (RecordStoreFullException ex) {
             ex.printStackTrace();
         } catch (RecordStoreNotFoundException ex) {
@@ -150,10 +153,12 @@ public class PersistentManager {
             rs.closeRecordStore();
         } catch (RecordStoreFullException ex) {
             ex.printStackTrace();
-            new Warning("adding feed", ex.getMessage()).show();
+            new Warning("adding feed", "1: " + ex.toString()).show();
         } catch (RecordStoreException ex) {
             ex.printStackTrace();
-            new Warning("adding feed", ex.getMessage()).show();
+            new Warning("adding feed", "2: " + ex.toString()).show();
+        } catch (Throwable t) {
+            new Warning("adding feed", "3: " + t.toString()).show();
         }
 
     }

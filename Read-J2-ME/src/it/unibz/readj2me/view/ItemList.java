@@ -26,8 +26,8 @@ public class ItemList extends List implements CommandListener, Runnable {
     private Displayable parent;
     private Feed feed;
     private Vector items;
-    XmlReader xmlReader;
-    private Command backCommand,  openCommand,  updateCommand;
+    private XmlReader xmlReader;
+    private Command backCommand, openCommand, updateCommand, deleteItemCommand;
 
     public ItemList(Feed feed, Displayable parent) {
         super(feed.getName(), List.IMPLICIT);
@@ -38,10 +38,12 @@ public class ItemList extends List implements CommandListener, Runnable {
         backCommand = new Command("Back", Command.BACK, 0);
         openCommand = new Command("Open", Command.SCREEN, 0);
         updateCommand = new Command("Update", Command.SCREEN, 1);
+        deleteItemCommand = new Command("Delete Item", Command.SCREEN, 2);
         
         this.addCommand(backCommand);
         this.addCommand(openCommand);
         this.addCommand(updateCommand);
+        this.addCommand(deleteItemCommand);
         this.setCommandListener(this);
 
         this.setFitPolicy(Choice.TEXT_WRAP_OFF);
@@ -99,29 +101,39 @@ public class ItemList extends List implements CommandListener, Runnable {
     }
 
     public void commandAction(Command c, Displayable d) {
+        int index;
         if (c == backCommand) {
             ReadJ2ME.showOnDisplay(parent);
         } else if (c == updateCommand) {
             Thread updateThread = new Thread(this);
             updateThread.start();
+        } else if (c == deleteItemCommand) {
+            index = this.getSelectedIndex();
+            if(index >= 0) {
+                NewsItem selectedItem = (NewsItem) items.elementAt(index);
+                PersistentManager.getInstance().removeNewsItem(selectedItem, feed.getItemsRecordStoreName());
+                //update list and vector
+                this.delete(index);
+                items.removeElementAt(index);
+            }
         } else if (c == openCommand || d == this) {
-            int index = this.getSelectedIndex();
+            index = this.getSelectedIndex();
             if (index >= 0) {
                 NewsItem selectedItem = (NewsItem) items.elementAt(index);
+                ItemView itemView = new ItemView(selectedItem, this);
+                ReadJ2ME.showOnDisplay(itemView);
+
+                //update item's read-status
                 if (!selectedItem.isRead()) {
+                    selectedItem.setRead(true);
+                    PersistentManager.getInstance().updateNewsItem(selectedItem, feed.getItemsRecordStoreName());
                     this.setFont(index, Font.getDefaultFont());
                     this.set(index, selectedItem.getTitle(), ImageLoader.getImage(ImageLoader.GREY_FEED));
                 }
-                ItemView itemView = new ItemView(selectedItem, this);
-                ReadJ2ME.showOnDisplay(itemView);
             } else {
                 new Warning("Info", "No item to be shown, perform an update..").show();
             }
         }
-    }
-
-    public String getFeedsItemsRecordStoreName(){
-        return feed.getItemsRecordStoreName();
     }
 
 }

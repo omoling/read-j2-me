@@ -46,9 +46,16 @@ public class FeedView extends Form implements CommandListener{
         if (c == backCommand) {
             ReadJ2ME.showOnDisplay(parent);
         } else if (c == saveCommand) {
-            PersistentManager.getInstance().addFeed(feedNameField.getString(), feedUrlField.getString());
-            ((FeedList)parent).refreshList();
-            ReadJ2ME.showOnDisplay(parent);
+            String name = feedNameField.getString();
+            String url = feedUrlField.getString();
+
+            if(name != null && url != null && !name.equals("") && !url.equals("")){
+                PersistentManager.getInstance().addFeed(name, url);
+                ((FeedList)parent).refreshList();
+                ReadJ2ME.showOnDisplay(parent);
+            } else {
+                new Warning("Adding a feed", "Define both name and url..").show();
+            }
         }
     }
     

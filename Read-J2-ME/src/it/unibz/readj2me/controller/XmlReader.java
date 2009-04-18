@@ -13,8 +13,6 @@ import org.xmlpull.v1.*;
  */
 public class XmlReader {
 
-    private final static String XML_NAME = "/sampleatom.xml";
-    private final static String XML_URL = "http://www.heise.de/mobil/newsticker/heise-atom.xml";
     private final static String ENCODING = "utf-8";
     private final static String TAG_ENTRY = "entry";
     private final static String TAG_ID = "id";

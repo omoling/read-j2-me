@@ -2,8 +2,10 @@ package it.unibz.readj2me.controller;
 
 import java.io.IOException;
 import java.io.InputStream;
+import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
+import javax.microedition.io.HttpsConnection;
 
 /**
  *
@@ -18,7 +20,12 @@ public class Networking {
     //TODO review!!!
     public InputStream getInputStream(String url){
         try {
-            HttpConnection conn = (HttpConnection) Connector.open(url);
+            HttpConnection conn;
+            if (url.startsWith("https")) {
+                conn = (HttpsConnection) Connector.open(url);
+            } else {
+                conn = (HttpConnection) Connector.open(url);
+            }
             conn.setRequestMethod(HttpConnection.GET);
             conn.setRequestProperty("Content-Type", "//text plain");
             conn.setRequestProperty("Connection", "close");

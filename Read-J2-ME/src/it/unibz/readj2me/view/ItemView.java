@@ -36,9 +36,10 @@ public class ItemView extends Form implements CommandListener, ItemCommandListen
         this.setCommandListener(this);
 
         populateView();
-        checkItemUpdate();
+        //checkItemUpdate();
     }
 
+    /*
     private void checkItemUpdate() {
         if(!newsItem.isRead()){
             newsItem.setRead(true);
@@ -46,6 +47,7 @@ public class ItemView extends Form implements CommandListener, ItemCommandListen
             PersistentManager.getInstance().updateNewsItem(newsItem, rsName);
         }
     }
+    */
 
     private void populateView() {
         if (newsItem.getTitle() != null && !newsItem.getTitle().equals("")){
@@ -67,7 +69,7 @@ public class ItemView extends Form implements CommandListener, ItemCommandListen
             this.append(summaryItem);
         }
         if (newsItem.getLink() != null && !newsItem.getLink().equals("")) {
-            linkItem = new StringItem(null, "Link");
+            linkItem = new StringItem(null, "Link", Item.HYPERLINK);
             linkItem.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
             linkItem.setLayout(Item.LAYOUT_LEFT);
             openLinkCommand = new Command("Browse", Command.OK, 0);

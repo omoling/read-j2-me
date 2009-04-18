@@ -19,7 +19,9 @@ import javax.microedition.rms.RecordStoreException;
 public class FeedList extends List implements CommandListener {
 
     private Command exitCommand, openCommand, addFeedCommand, deleteFeedCommand;
-    private Command eraseRSCommand, listRSCommand;
+
+    //test commands
+    private Command eraseRSCommand, listRSCommand, testCommand;
     private Vector items;
 
     public FeedList(String title, Displayable parent) {
@@ -30,31 +32,24 @@ public class FeedList extends List implements CommandListener {
         openCommand = new Command("Open", Command.SCREEN, 0);
         addFeedCommand = new Command("Add new Feed", Command.SCREEN, 1);
         deleteFeedCommand = new Command("Delete Feed", Command.SCREEN, 2);
+
+        //test commands
         eraseRSCommand = new Command("Erase RS", Command.SCREEN, 5);
         listRSCommand = new Command("List RS", Command.SCREEN, 4);
+        testCommand = new Command("Test", Command.SCREEN, 6);
 
         this.addCommand(exitCommand);
         this.addCommand(openCommand);
         this.addCommand(addFeedCommand);
         this.addCommand(deleteFeedCommand);
+
+        //test commands
         this.addCommand(eraseRSCommand);
         this.addCommand(listRSCommand);
+        this.addCommand(testCommand);
+
         this.setCommandListener(this);
-
-        //test
-        /*
-        Feed heiseFeed = new Feed();
-        heiseFeed.setName("Heise Mobile Atom");
-        heiseFeed.setUrl("http://www.heise.de/mobil/newsticker/heise-atom.xml");
-        items.addElement(heiseFeed);
-        Feed heiseFeed2 = new Feed();
-        heiseFeed2.setName("Heise Security Atom");
-        heiseFeed2.setUrl("http://www.heise.de/security/news/news-atom.xml");
-        items.addElement(heiseFeed2);
-        */
-        
         refreshList();
-
     }
 
     public void refreshList() {
@@ -76,9 +71,9 @@ public class FeedList extends List implements CommandListener {
                 this.append(feed.getName(), ImageLoader.getImage(ImageLoader.DEFAULT_FEED));
             }
         } catch (RecordStoreException ex) {
-            new Warning("Error", "Some error while loading occurred..").show();
-        } catch (Exception ex) {
-            new Warning("Error", "Some error occurred..").show();
+            new Warning("Error", "Some error while loading occurred.. " + ex.toString()).show();
+        } catch (Throwable ex) {
+            new Warning("Error", "Some error occurred.." + ex.toString()).show();
         }
 
     }
@@ -90,11 +85,13 @@ public class FeedList extends List implements CommandListener {
             FeedView feedView = new FeedView(this);
             ReadJ2ME.showOnDisplay(feedView);
         } else if (c == deleteFeedCommand) {
-            Feed selectedFeed = (Feed) items.elementAt(this.getSelectedIndex());
-
-            //TODO remove manually single removed element?
-            PersistentManager.getInstance().removeFeed(selectedFeed, true);
-            refreshList();
+            int index = this.getSelectedIndex();
+            if(index >= 0){
+                Feed selectedFeed = (Feed) items.elementAt(index);     
+                PersistentManager.getInstance().removeFeed(selectedFeed, true);
+                //TODO remove manually only single removed element? (avoid reloading??)
+                refreshList();
+            }
         } else if (c == listRSCommand) {
             //TODO: to be removed after development
             PersistentManager.getInstance().listRS();
@@ -102,10 +99,20 @@ public class FeedList extends List implements CommandListener {
             //TODO: to be removed after development
             PersistentManager.getInstance().eraseRS();
             refreshList();
+        } else if (c == testCommand) {
+            //TODO: to be removed after development
+            PersistentManager.getInstance().addFeed("heise security", "http://www.heise.de/security/news/news-atom.xml");
+            refreshList();
+            
         } else if (c == openCommand || d == this) {
-            Feed selectedFeed = (Feed) items.elementAt(this.getSelectedIndex());
-            ItemList list = new ItemList(selectedFeed, this);
-            ReadJ2ME.showOnDisplay(list);
-        } 
+            int index = this.getSelectedIndex();
+            if (index >= 0) {
+                Feed selectedFeed = (Feed) items.elementAt(index);
+                ItemList list = new ItemList(selectedFeed, this);
+                ReadJ2ME.showOnDisplay(list);
+            } else {
+                new Warning("Info", "Add a feed first..").show();
+            }
+        }
     }
 }
