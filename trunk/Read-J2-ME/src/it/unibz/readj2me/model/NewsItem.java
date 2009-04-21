@@ -1,5 +1,7 @@
 package it.unibz.readj2me.model;
 
+import it.unibz.readj2me.view.Warning;
+
 /**
  *
  * @author Anton Dignoes, Omar Moling
@@ -14,15 +16,16 @@ public class NewsItem {
     private String content = "";
     private String summary = "";
     private boolean read = false;
+    private int rs_id;
 
-    public NewsItem(){
+    public NewsItem() {
     }
 
-    public NewsItem(byte[] recordData){
+    public NewsItem(byte[] recordData) {
         createFromBytes(recordData);
     }
 
-    public byte[] getBytes(){
+    public byte[] getBytes() {
         StringBuffer sb = new StringBuffer();
         sb.append(id);
         sb.append(Constants.FIELD_SEPARATOR);
@@ -38,45 +41,61 @@ public class NewsItem {
         sb.append(Constants.FIELD_SEPARATOR);
         sb.append(published);
         sb.append(Constants.FIELD_SEPARATOR);
-        if(read){
+        if (read) {
             sb.append("1");
         } else {
             sb.append("0");
         }
+        sb.append(Constants.FIELD_SEPARATOR);
+        sb.append(rs_id);
         return sb.toString().getBytes();
     }
 
-    private void createFromBytes(byte[] recordData){
+    private void createFromBytes(byte[] recordData) {
+        try {
+            String recordString = new String(recordData);
+            int index1, index2;
+            index1 = recordString.indexOf(Constants.FIELD_SEPARATOR);
+            id = recordString.substring(0, index1);
+            index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
+            title = recordString.substring(index1 + 1, index2);
+            index1 = index2;
+            index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
+            content = recordString.substring(index1 + 1, index2);
+            index1 = index2;
+            index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
+            summary = recordString.substring(index1 + 1, index2);
+            index1 = index2;
+            index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
+            link = recordString.substring(index1 + 1, index2);
+            index1 = index2;
+            index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
+            updated = recordString.substring(index1 + 1, index2);
+            index1 = index2;
+            index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
+            published = recordString.substring(index1 + 1, index2);
+            index1 = index2;
+            index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
+            String tempRead = recordString.substring(index1 + 1, index2);
+            if (tempRead.equals("1")) {
+                read = true;
+            } else {
+                read = false;
+            }
+            index1 = index2;
+            String tempRs_Id = recordString.substring(index1 + 1, recordString.length());
+            try {
+                rs_id = Integer.parseInt(tempRs_Id);
+            } catch (Throwable t) {
+                //TODO: remove then..
+                new Warning("parsing newsitem id", "parsing newsitem id").show();
+                t.printStackTrace();
+            }
 
-        //TODO: check when unable to parse!!
-
-        String recordString = new String(recordData);
-        int index1, index2;
-        index1 = recordString.indexOf(Constants.FIELD_SEPARATOR);
-        id = recordString.substring(0, index1);
-        index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
-        title = recordString.substring(index1 + 1, index2);
-        index1 = index2;
-        index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
-        content = recordString.substring(index1 + 1, index2);
-        index1 = index2;
-        index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
-        summary = recordString.substring(index1 + 1, index2);
-        index1 = index2;
-        index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
-        link = recordString.substring(index1 + 1, index2);
-        index1 = index2;
-        index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
-        updated = recordString.substring(index1 + 1, index2);
-        index1 = index2;
-        index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
-        published = recordString.substring(index1 + 1, index2);
-        index1 = index2;
-        String tempRead = recordString.substring(index1 + 1, recordString.length());
-        if(tempRead.equals("1")){
-            read = true;
-        } else {
-            read = false;
+        } catch (Throwable t) {
+            //TODO:
+            //throw new Exception("Parsing error in RecordStore");
+            t.printStackTrace();
         }
     }
 
@@ -192,4 +211,17 @@ public class NewsItem {
         this.read = read;
     }
 
+    /**
+     * @return the rs_id
+     */
+    public int getRs_id() {
+        return rs_id;
+    }
+
+    /**
+     * @param rs_id the rs_id to set
+     */
+    public void setRs_id(int rs_id) {
+        this.rs_id = rs_id;
+    }
 }

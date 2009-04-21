@@ -107,6 +107,8 @@ public class PersistentManager {
             while(enumeration.hasMoreElements()){
                 item = (NewsItem)enumeration.nextElement();
                 if(!feed.getKnownIds().contains(item.getId())){
+                    int nextId = rs.getNextRecordID();
+                    item.setRs_id(nextId);
                     byte[] row = item.getBytes();
                     rs.addRecord(row, 0, row.length);
                     feed.getKnownIds().addElement(item.getId());
@@ -132,14 +134,36 @@ public class PersistentManager {
     }
 
     public void updateNewsItem(NewsItem item, String rsName){
-        removeNewsItem(item, rsName);
-        addNewsItem(item, rsName);
+        try {
+            //removeNewsItem(item, rsName);
+            //addNewsItem(item, rsName);
+            RecordStore rs = RecordStore.openRecordStore(rsName, false);
+            byte[] row = item.getBytes();
+            rs.setRecord(item.getRs_id(), row, 0, row.length);
+        } catch (RecordStoreFullException ex) {
+            ex.printStackTrace();
+        } catch (RecordStoreNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (RecordStoreException ex) {
+            ex.printStackTrace();
+        } 
     }
 
     public void updateFeed(Feed feed){
         //update feed on RS (delete and rewrite it)
-        removeFeed(feed, false);
-        addFeed(feed);
+        //removeFeed(feed, false);
+        //addFeed(feed);
+        try {
+            RecordStore rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, false);
+            byte[] row = feed.getBytes();
+            rs.setRecord(feed.getRs_id(), row, 0, row.length);
+        } catch (RecordStoreFullException ex) {
+            ex.printStackTrace();
+        } catch (RecordStoreNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (RecordStoreException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void addFeed(String name, String url) {
@@ -147,7 +171,7 @@ public class PersistentManager {
         try {
             rsItemsName = getRandomRecordStoreName();
             RecordStore rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, true);
-            Feed newFeed = new Feed(url, name, rsItemsName);
+            Feed newFeed = new Feed(url, name, rsItemsName, rs.getNextRecordID());
             byte[] row = newFeed.getBytes();
             rs.addRecord(row, 0, row.length);
             rs.closeRecordStore();
@@ -163,10 +187,13 @@ public class PersistentManager {
 
     }
 
+    /*
+     * NOT used at the moment
     public void addFeed(Feed feed) {
         try {
             RecordStore rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, true);
             byte[] row = feed.getBytes();
+     * // rs_id
             rs.addRecord(row, 0, row.length);
             rs.closeRecordStore();
         } catch (RecordStoreFullException ex) {
@@ -175,10 +202,15 @@ public class PersistentManager {
             ex.printStackTrace();
         }
     }
+    */
 
+    /*
+     * NOT used at the moment
     public void addNewsItem(NewsItem item, String rsName){
         try {
             RecordStore rs = RecordStore.openRecordStore(rsName, false);
+            int nextId = rs.getNextRecordID();
+            item.setRs_id(nextId);
             byte[] row = item.getBytes();
             rs.addRecord(row, 0, row.length);
             rs.closeRecordStore();
@@ -190,6 +222,7 @@ public class PersistentManager {
             ex.printStackTrace();
         }
     }
+    */
 
     public void removeNewsItem(NewsItem item, String rsName){
         RecordStore rs;
@@ -218,12 +251,17 @@ public class PersistentManager {
         RecordStore rs;
         try {
             rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, false);
+
+            rs.deleteRecord(feed.getRs_id());
+
+            /* TODO: to be removed (check) since record-id stored now in feed-object
             //find the one record
             RecordEnumeration re = rs.enumerateRecords(new FeedFilter(feed.getUrl()), null, false);
 
             while (re.hasNextElement()) {
                 rs.deleteRecord(re.nextRecordId());
             }
+            */
 
             rs.closeRecordStore();
 

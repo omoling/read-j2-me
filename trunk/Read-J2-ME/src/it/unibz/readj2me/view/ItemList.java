@@ -27,7 +27,7 @@ public class ItemList extends List implements CommandListener, Runnable {
     private Feed feed;
     private Vector items;
     private XmlReader xmlReader;
-    private Command backCommand, openCommand, updateCommand, deleteItemCommand;
+    private Command backCommand,  openCommand,  updateCommand,  deleteItemCommand,  markUnreadCommand;
 
     public ItemList(Feed feed, Displayable parent) {
         super(feed.getName(), List.IMPLICIT);
@@ -38,11 +38,13 @@ public class ItemList extends List implements CommandListener, Runnable {
         backCommand = new Command("Back", Command.BACK, 0);
         openCommand = new Command("Open", Command.SCREEN, 0);
         updateCommand = new Command("Update", Command.SCREEN, 1);
-        deleteItemCommand = new Command("Delete Item", Command.SCREEN, 2);
-        
+        markUnreadCommand = new Command("Mark unread", Command.SCREEN, 2);
+        deleteItemCommand = new Command("Delete Item", Command.SCREEN, 3);
+
         this.addCommand(backCommand);
         this.addCommand(openCommand);
         this.addCommand(updateCommand);
+        this.addCommand(markUnreadCommand);
         this.addCommand(deleteItemCommand);
         this.setCommandListener(this);
 
@@ -54,11 +56,11 @@ public class ItemList extends List implements CommandListener, Runnable {
         //empty list and vector
         items.removeAllElements();
         this.deleteAll();
-        
+
         try {
             //TODO: handle d*** exceptions
             items = PersistentManager.getInstance().loadNewsItems(feed.getItemsRecordStoreName());
-            
+
         } catch (RecordStoreException ex) {
             ex.printStackTrace();
         } catch (Exception ex) {
@@ -70,7 +72,7 @@ public class ItemList extends List implements CommandListener, Runnable {
         Enumeration enumeration = items.elements();
         while (enumeration.hasMoreElements()) {
             item = (NewsItem) enumeration.nextElement();
-            if(item.isRead()){
+            if (item.isRead()) {
                 this.append(item.getTitle(), ImageLoader.getImage(ImageLoader.GREY_FEED));
             } else {
                 this.append(item.getTitle(), ImageLoader.getImage(ImageLoader.DEFAULT_FEED));
@@ -78,10 +80,10 @@ public class ItemList extends List implements CommandListener, Runnable {
         }
 
         //set bold-font if unread
-        for(int i = 0; i < this.size(); i++){
+        for (int i = 0; i < this.size(); i++) {
             item = (NewsItem) items.elementAt(i);
 
-            if(!item.isRead()){
+            if (!item.isRead()) {
                 this.setFont(i, Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
             }
         }
@@ -101,28 +103,38 @@ public class ItemList extends List implements CommandListener, Runnable {
     }
 
     public void commandAction(Command c, Displayable d) {
-        int index;
+
+        //avoid initialization of objects if going to update or exit the view
         if (c == backCommand) {
             ReadJ2ME.showOnDisplay(parent);
+            return;
         } else if (c == updateCommand) {
             Thread updateThread = new Thread(this);
             updateThread.start();
-        } else if (c == deleteItemCommand) {
-            index = this.getSelectedIndex();
-            if(index >= 0) {
-                NewsItem selectedItem = (NewsItem) items.elementAt(index);
+            return;
+        }
+
+        int index = this.getSelectedIndex();
+        if (index >= 0) {
+            NewsItem selectedItem = (NewsItem) items.elementAt(index);
+
+            if (c == markUnreadCommand) {
+                selectedItem.setRead(false);
+                PersistentManager.getInstance().updateNewsItem(selectedItem, feed.getItemsRecordStoreName());
+                //update list and vector
+                this.set(index, selectedItem.getTitle(), ImageLoader.getImage(ImageLoader.DEFAULT_FEED));
+                this.setFont(index, Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
+
+            } else if (c == deleteItemCommand) {
                 PersistentManager.getInstance().removeNewsItem(selectedItem, feed.getItemsRecordStoreName());
                 //update list and vector
                 this.delete(index);
                 items.removeElementAt(index);
-            }
-        } else if (c == openCommand || d == this) {
-            index = this.getSelectedIndex();
-            if (index >= 0) {
-                NewsItem selectedItem = (NewsItem) items.elementAt(index);
+
+            } else if (c == openCommand || d == this) {
+                //show view
                 ItemView itemView = new ItemView(selectedItem, this);
                 ReadJ2ME.showOnDisplay(itemView);
-
                 //update item's read-status
                 if (!selectedItem.isRead()) {
                     selectedItem.setRead(true);
@@ -130,10 +142,10 @@ public class ItemList extends List implements CommandListener, Runnable {
                     this.setFont(index, Font.getDefaultFont());
                     this.set(index, selectedItem.getTitle(), ImageLoader.getImage(ImageLoader.GREY_FEED));
                 }
-            } else {
-                new Warning("Info", "No item to be shown, perform an update..").show();
             }
+            
+        } else {
+            new Warning("Info", "No item! Perform an update..").show();
         }
     }
-
 }

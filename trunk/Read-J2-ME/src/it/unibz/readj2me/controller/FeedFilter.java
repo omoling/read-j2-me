@@ -6,6 +6,8 @@ import javax.microedition.rms.RecordFilter;
 /**
  *
  * @author Anton Dignoes, Omar Moling
+ *
+ * NOT needed !??
  */
 public class FeedFilter implements RecordFilter {
 

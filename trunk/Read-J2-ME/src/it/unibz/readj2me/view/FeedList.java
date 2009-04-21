@@ -24,7 +24,7 @@ public class FeedList extends List implements CommandListener {
     private Command eraseRSCommand, listRSCommand, testCommand;
     private Vector items;
 
-    public FeedList(String title, Displayable parent) {
+    public FeedList(String title) {
         super(title, List.IMPLICIT);
         items = new Vector();
 
@@ -79,13 +79,19 @@ public class FeedList extends List implements CommandListener {
     }
 
     public void commandAction(Command c, Displayable d) {
+        //if exit do nithing else
         if (c == exitCommand) {
             ReadJ2ME.destroy(true);
-        } else if (c == addFeedCommand) {
+            return;
+        }
+
+        int index = this.getSelectedIndex();
+
+        if (c == addFeedCommand) {
             FeedView feedView = new FeedView(this);
             ReadJ2ME.showOnDisplay(feedView);
         } else if (c == deleteFeedCommand) {
-            int index = this.getSelectedIndex();
+            
             if(index >= 0){
                 Feed selectedFeed = (Feed) items.elementAt(index);     
                 PersistentManager.getInstance().removeFeed(selectedFeed, true);
@@ -105,7 +111,6 @@ public class FeedList extends List implements CommandListener {
             refreshList();
             
         } else if (c == openCommand || d == this) {
-            int index = this.getSelectedIndex();
             if (index >= 0) {
                 Feed selectedFeed = (Feed) items.elementAt(index);
                 ItemList list = new ItemList(selectedFeed, this);
