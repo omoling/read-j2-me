@@ -23,6 +23,7 @@ public class ReadJ2ME extends MIDlet {
             this.display = Display.getDisplay(this);
             FeedList feedList = new FeedList("Read-J2-Me");
             showOnDisplay(feedList);
+            initialized = true;
         }
     }
 
