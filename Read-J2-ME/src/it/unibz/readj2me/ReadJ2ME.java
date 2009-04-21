@@ -14,13 +14,16 @@ public class ReadJ2ME extends MIDlet {
 
     private Display display;
 
+    private boolean initialized = false;
     private static ReadJ2ME instance;
 
     public void startApp() {
-        instance = this;
-        this.display = Display.getDisplay(this);
-        FeedList feedList = new FeedList("Read-J2-Me", null);
-        showOnDisplay(feedList);
+        if (!initialized) {
+            instance = this;
+            this.display = Display.getDisplay(this);
+            FeedList feedList = new FeedList("Read-J2-Me");
+            showOnDisplay(feedList);
+        }
     }
 
     public void pauseApp() {
