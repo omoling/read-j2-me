@@ -6,8 +6,15 @@ package it.unibz.readj2me.model;
  */
 public class Constants {
 
+    // RECORD STORE
     public static final char FIELD_SEPARATOR = '|';
     public static final String RS_PREFIX = "rj2me_";
     public static final String FEED_RS_NAME = RS_PREFIX + "feeds";
+    public static final String TAGS_RS_NAME = RS_PREFIX + "tags";
+
+    //IMAGES
+    public static final String IMG_DEFAULT_FEED = "/feed.png";
+    public static final String IMG_GREY_FEED = "/feed_grey.png";
+    public static final String IMG_TAG = "/tag_12.png";
 
 }

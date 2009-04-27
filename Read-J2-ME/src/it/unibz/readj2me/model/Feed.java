@@ -8,7 +8,7 @@ import java.util.Vector;
  *
  * @author Anton Dignoes, Omar Moling
  */
-public class Feed {
+public class Feed implements IPersistable {
 
     private String url;
     private String name;
@@ -46,7 +46,7 @@ public class Feed {
         return sb.toString().getBytes();
     }
 
-    private void createFromBytes(byte[] recordData) {
+    public void createFromBytes(byte[] recordData) {
         String dataString = new String(recordData);
         int index1, index2;
         try {

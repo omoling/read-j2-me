@@ -4,6 +4,7 @@ import it.unibz.readj2me.ReadJ2ME;
 import it.unibz.readj2me.controller.ImageLoader;
 import it.unibz.readj2me.controller.PersistentManager;
 import it.unibz.readj2me.controller.XmlReader;
+import it.unibz.readj2me.model.Constants;
 import it.unibz.readj2me.model.Feed;
 import it.unibz.readj2me.model.NewsItem;
 import java.util.Enumeration;
@@ -73,9 +74,9 @@ public class ItemList extends List implements CommandListener, Runnable {
         while (enumeration.hasMoreElements()) {
             item = (NewsItem) enumeration.nextElement();
             if (item.isRead()) {
-                this.append(item.getTitle(), ImageLoader.getImage(ImageLoader.GREY_FEED));
+                this.append(item.getTitle(), ImageLoader.getImage(Constants.IMG_GREY_FEED));
             } else {
-                this.append(item.getTitle(), ImageLoader.getImage(ImageLoader.DEFAULT_FEED));
+                this.append(item.getTitle(), ImageLoader.getImage(Constants.IMG_DEFAULT_FEED));
             }
         }
 
@@ -122,7 +123,7 @@ public class ItemList extends List implements CommandListener, Runnable {
                 selectedItem.setRead(false);
                 PersistentManager.getInstance().updateNewsItem(selectedItem, feed.getItemsRecordStoreName());
                 //update list and vector
-                this.set(index, selectedItem.getTitle(), ImageLoader.getImage(ImageLoader.DEFAULT_FEED));
+                this.set(index, selectedItem.getTitle(), ImageLoader.getImage(Constants.IMG_DEFAULT_FEED));
                 this.setFont(index, Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
 
             } else if (c == deleteItemCommand) {
@@ -140,7 +141,7 @@ public class ItemList extends List implements CommandListener, Runnable {
                     selectedItem.setRead(true);
                     PersistentManager.getInstance().updateNewsItem(selectedItem, feed.getItemsRecordStoreName());
                     this.setFont(index, Font.getDefaultFont());
-                    this.set(index, selectedItem.getTitle(), ImageLoader.getImage(ImageLoader.GREY_FEED));
+                    this.set(index, selectedItem.getTitle(), ImageLoader.getImage(Constants.IMG_GREY_FEED));
                 }
             }
             
