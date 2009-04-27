@@ -6,7 +6,7 @@ import it.unibz.readj2me.view.Warning;
  *
  * @author Anton Dignoes, Omar Moling
  */
-public class NewsItem {
+public class NewsItem implements IPersistable {
 
     private String id = "";
     private String title = "";
@@ -51,7 +51,7 @@ public class NewsItem {
         return sb.toString().getBytes();
     }
 
-    private void createFromBytes(byte[] recordData) {
+    public void createFromBytes(byte[] recordData) {
         try {
             String recordString = new String(recordData);
             int index1, index2;

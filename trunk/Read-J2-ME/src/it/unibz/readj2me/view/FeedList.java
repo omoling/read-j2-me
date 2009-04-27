@@ -3,6 +3,7 @@ package it.unibz.readj2me.view;
 import it.unibz.readj2me.ReadJ2ME;
 import it.unibz.readj2me.controller.ImageLoader;
 import it.unibz.readj2me.controller.PersistentManager;
+import it.unibz.readj2me.model.Constants;
 import it.unibz.readj2me.model.Feed;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -19,6 +20,7 @@ import javax.microedition.rms.RecordStoreException;
 public class FeedList extends List implements CommandListener {
 
     private Command exitCommand, openCommand, addFeedCommand, deleteFeedCommand;
+    private Command manageTagCommand;
 
     //test commands
     private Command eraseRSCommand, listRSCommand, testCommand;
@@ -32,6 +34,7 @@ public class FeedList extends List implements CommandListener {
         openCommand = new Command("Open", Command.SCREEN, 0);
         addFeedCommand = new Command("Add new Feed", Command.SCREEN, 1);
         deleteFeedCommand = new Command("Delete Feed", Command.SCREEN, 2);
+        manageTagCommand = new Command("Manage Tags", Command.SCREEN, 3);
 
         //test commands
         eraseRSCommand = new Command("Erase RS", Command.SCREEN, 5);
@@ -42,6 +45,7 @@ public class FeedList extends List implements CommandListener {
         this.addCommand(openCommand);
         this.addCommand(addFeedCommand);
         this.addCommand(deleteFeedCommand);
+        this.addCommand(manageTagCommand);
 
         //test commands
         this.addCommand(eraseRSCommand);
@@ -65,10 +69,11 @@ public class FeedList extends List implements CommandListener {
         //TODO: put in items and show by iterating items?
         try {
             enumeration = pm.loadFeeds().elements();
+            Feed feed;
             while (enumeration.hasMoreElements()) {
-                Feed feed = (Feed) enumeration.nextElement();
+                feed = (Feed) enumeration.nextElement();
                 items.addElement(feed);
-                this.append(feed.getName(), ImageLoader.getImage(ImageLoader.DEFAULT_FEED));
+                this.append(feed.getName(), ImageLoader.getImage(Constants.IMG_DEFAULT_FEED));
             }
         } catch (RecordStoreException ex) {
             new Warning("Error", "Some error while loading occurred.. " + ex.toString()).show();
@@ -79,9 +84,13 @@ public class FeedList extends List implements CommandListener {
     }
 
     public void commandAction(Command c, Displayable d) {
-        //if exit do nithing else
+        //if-else for operations that do not require inst.of objects
         if (c == exitCommand) {
             ReadJ2ME.destroy(true);
+            return;
+        } else if (c == manageTagCommand) {
+            TagList tagList = new TagList("Tags", this);
+            ReadJ2ME.showOnDisplay(tagList);
             return;
         }
 

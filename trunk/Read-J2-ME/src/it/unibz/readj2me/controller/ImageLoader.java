@@ -9,9 +9,6 @@ import javax.microedition.lcdui.Image;
  */
 public class ImageLoader {
 
-    public static final String DEFAULT_FEED = "/feed.png";
-    public static final String GREY_FEED = "/feed_grey.png";
-
     public static Image getImage(String name) {
         Image img = null;
         try {
