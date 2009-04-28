@@ -46,7 +46,7 @@ public class ReadJ2ME extends MIDlet {
 
     public static void platReq(String url){
         try {
-          if(instance.platformRequest("omar moling")) {
+          if(instance.platformRequest(url)) {
              new WarningAlert("Warning", "Either no browsing capabilities\nor the Midlet has to be quit to view the page.").show();
           }
         } catch (ConnectionNotFoundException ex) {
