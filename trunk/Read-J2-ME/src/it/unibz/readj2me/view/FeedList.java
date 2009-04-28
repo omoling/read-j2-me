@@ -73,9 +73,9 @@ public class FeedList extends List implements CommandListener {
                 this.append(feed.getName(), ImageLoader.getImage(Constants.IMG_DEFAULT_FEED));
             }
         } catch (RecordStoreException ex) {
-            new Warning("Error", "Some error while loading occurred.. " + ex.toString()).show();
+            new WarningAlert("Error", "Some error while loading occurred.. " + ex.toString()).show();
         } catch (Throwable ex) {
-            new Warning("Error", "Some error occurred.." + ex.toString()).show();
+            new WarningAlert("Error", "Some error occurred.." + ex.toString()).show();
         }
 
     }
@@ -94,15 +94,16 @@ public class FeedList extends List implements CommandListener {
         int index = this.getSelectedIndex();
 
         if (c == addFeedCommand) {
-            FeedView feedView = new FeedView(this);
+            FeedForm feedView = new FeedForm(this);
             ReadJ2ME.showOnDisplay(feedView);
         } else if (c == deleteFeedCommand) {
             
             if(index >= 0){
                 Feed selectedFeed = (Feed) items.elementAt(index);     
                 PersistentManager.getInstance().removeFeed(selectedFeed, true);
-                //TODO remove manually only single removed element? (avoid reloading??)
-                refreshList();
+                //remove from vector and list
+                items.removeElementAt(index);
+                this.delete(index);
             }
         } else if (c == listRSCommand) {
             //TODO: to be removed after development
@@ -119,10 +120,10 @@ public class FeedList extends List implements CommandListener {
         } else if (c == openCommand || d == this) {
             if (index >= 0) {
                 Feed selectedFeed = (Feed) items.elementAt(index);
-                ItemList list = new ItemList(selectedFeed, this);
+                NewsItemList list = new NewsItemList(selectedFeed, this);
                 ReadJ2ME.showOnDisplay(list);
             } else {
-                new Warning("Info", "Add a feed first..").show();
+                new WarningAlert("Info", "Add a feed first..").show();
             }
         }
     }

@@ -22,7 +22,7 @@ import javax.microedition.rms.RecordStoreException;
  *
  * @author Anton Dignoes, Omar Moling
  */
-public class ItemList extends List implements CommandListener, Runnable {
+public class NewsItemList extends List implements CommandListener, Runnable {
 
     private Displayable parent;
     private Feed feed;
@@ -30,7 +30,7 @@ public class ItemList extends List implements CommandListener, Runnable {
     private XmlReader xmlReader;
     private Command backCommand,  openCommand,  updateCommand,  deleteItemCommand,  markUnreadCommand;
 
-    public ItemList(Feed feed, Displayable parent) {
+    public NewsItemList(Feed feed, Displayable parent) {
         super(feed.getName(), List.IMPLICIT);
         this.parent = parent;
         this.feed = feed;
@@ -100,6 +100,8 @@ public class ItemList extends List implements CommandListener, Runnable {
         PersistentManager.getInstance().addNewsItems(feed, newItems);
         updateList();
 
+        //TODO: remove from feed's IDs-vector those IDs that are not present in the feed anymore
+
         this.setTicker(null);
     }
 
@@ -134,7 +136,7 @@ public class ItemList extends List implements CommandListener, Runnable {
 
             } else if (c == openCommand || d == this) {
                 //show view
-                ItemView itemView = new ItemView(selectedItem, this);
+                NewsItemForm itemView = new NewsItemForm(selectedItem, this);
                 ReadJ2ME.showOnDisplay(itemView);
                 //update item's read-status
                 if (!selectedItem.isRead()) {
@@ -146,7 +148,7 @@ public class ItemList extends List implements CommandListener, Runnable {
             }
             
         } else {
-            new Warning("Info", "No item! Perform an update..").show();
+            new WarningAlert("Info", "No item! Perform an update..").show();
         }
     }
 }

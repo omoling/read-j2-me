@@ -9,11 +9,11 @@ import javax.microedition.lcdui.TextField;
  *
  * @author Anton Dignoes, Omar Moling
  */
-public class TagView extends InputView {
+public class TagForm extends InputForm {
 
     private TextField tagNameField;
 
-    public TagView(Displayable parent){
+    public TagForm(Displayable parent){
         super("Add a new tag", parent);
 
         tagNameField = new TextField("Name", "Tech", 10, TextField.ANY);
@@ -24,8 +24,12 @@ public class TagView extends InputView {
 
     protected void save() {
         PersistentManager.getInstance().addTag(getName());
-        //TODO: should be put in abstract InputView
-        ((TagList)parent).refreshList();
+        //TODO: should be put in abstract InputView??
+        if(parent.getClass().equals(TagList.class)){
+            ((TagList)parent).refreshList();
+        } else if (parent.getClass().equals(TagChoiceForm.class)) {
+            ((TagChoiceForm)parent).refreshChoice();
+        }
     }
 
     protected boolean isInputValid() {

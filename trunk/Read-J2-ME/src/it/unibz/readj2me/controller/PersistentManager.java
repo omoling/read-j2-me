@@ -4,7 +4,7 @@ import it.unibz.readj2me.model.Constants;
 import it.unibz.readj2me.model.Feed;
 import it.unibz.readj2me.model.NewsItem;
 import it.unibz.readj2me.model.Tag;
-import it.unibz.readj2me.view.Warning;
+import it.unibz.readj2me.view.WarningAlert;
 import java.util.Enumeration;
 import java.util.Random;
 import java.util.Vector;
@@ -84,8 +84,7 @@ public class PersistentManager {
         RecordStore rs = RecordStore.openRecordStore(Constants.TAGS_RS_NAME, true);
         Vector items = new Vector();
 
-        //TODO add TagComparator
-        RecordEnumeration re = rs.enumerateRecords(null, null, false);
+        RecordEnumeration re = rs.enumerateRecords(null, new TagComparator(), false);
         byte[] rawRecord;
         while(re.hasNextElement()) {
             rawRecord = re.nextRecord();
@@ -192,12 +191,12 @@ public class PersistentManager {
             rs.closeRecordStore();
         } catch (RecordStoreFullException ex) {
             ex.printStackTrace();
-            new Warning("adding tag", "1: " + ex.toString()).show();
+            new WarningAlert("adding tag", "1: " + ex.toString()).show();
         } catch (RecordStoreException ex) {
             ex.printStackTrace();
-            new Warning("adding tag", "2: " + ex.toString()).show();
+            new WarningAlert("adding tag", "2: " + ex.toString()).show();
         } catch (Throwable t) {
-            new Warning("adding tag", "3: " + t.toString()).show();
+            new WarningAlert("adding tag", "3: " + t.toString()).show();
         }
     }
 
@@ -212,12 +211,12 @@ public class PersistentManager {
             rs.closeRecordStore();
         } catch (RecordStoreFullException ex) {
             ex.printStackTrace();
-            new Warning("adding feed", "1: " + ex.toString()).show();
+            new WarningAlert("adding feed", "1: " + ex.toString()).show();
         } catch (RecordStoreException ex) {
             ex.printStackTrace();
-            new Warning("adding feed", "2: " + ex.toString()).show();
+            new WarningAlert("adding feed", "2: " + ex.toString()).show();
         } catch (Throwable t) {
-            new Warning("adding feed", "3: " + t.toString()).show();
+            new WarningAlert("adding feed", "3: " + t.toString()).show();
         }
 
     }

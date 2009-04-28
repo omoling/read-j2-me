@@ -1,6 +1,6 @@
 package it.unibz.readj2me.model;
 
-import it.unibz.readj2me.view.Warning;
+import it.unibz.readj2me.view.WarningAlert;
 
 /**
  *
@@ -88,7 +88,7 @@ public class NewsItem implements IPersistable {
                 rs_id = Integer.parseInt(tempRs_Id);
             } catch (Throwable t) {
                 //TODO: remove then..
-                new Warning("parsing newsitem id", "parsing newsitem id").show();
+                new WarningAlert("parsing newsitem id", "parsing newsitem id").show();
                 t.printStackTrace();
             }
 

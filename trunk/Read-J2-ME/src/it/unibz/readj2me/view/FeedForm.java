@@ -11,11 +11,11 @@ import javax.microedition.lcdui.TextField;
  *
  * @author Anton Dignoes, Omar Moling
  */
-public class FeedView extends InputView {
+public class FeedForm extends InputForm {
 
     private TextField feedNameField,  feedUrlField;
 
-    public FeedView(Displayable parent) {
+    public FeedForm(Displayable parent) {
         super("Add a new feed", parent);
 
         feedNameField = new TextField("Name", "heise mobil atom", 30, TextField.ANY);
@@ -30,6 +30,7 @@ public class FeedView extends InputView {
 
     protected void save() {
         PersistentManager.getInstance().addFeed(getName(), getUrl());
+        //TODO: should be put in abstract InputView
         ((FeedList) parent).refreshList();
     }
 
@@ -37,7 +38,7 @@ public class FeedView extends InputView {
         if (getName() != null && getUrl() != null && !getName().equals("") && !getUrl().equals("")) {
             return true;
         } else {
-            new Warning("Adding a feed", "Define both name and url..").show();
+            new WarningAlert("Adding a feed", "Define both name and url..").show();
             return false;
         }
     }
