@@ -1,6 +1,7 @@
 package it.unibz.readj2me;
 
 import it.unibz.readj2me.view.FeedList;
+import it.unibz.readj2me.view.Warning;
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
@@ -45,9 +46,11 @@ public class ReadJ2ME extends MIDlet {
 
     public static void platReq(String url){
         try {
-            instance.platformRequest(url);
+          if(instance.platformRequest("omar moling")) {
+             new Warning("Warning", "Either no browsing capabilities\nor the Midlet has to be quit to view the page.").show(); 
+          }
         } catch (ConnectionNotFoundException ex) {
-            //nothing to do
+            new it.unibz.readj2me.view.Error("Error", "No connection available.").show();
         }
     }
     

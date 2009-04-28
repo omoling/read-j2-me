@@ -63,6 +63,7 @@ public class ItemView extends Form implements CommandListener, ItemCommandListen
             linkItem.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
             openLinkCommand = new Command("Browse", Command.OK, 0);
             linkItem.addCommand(openLinkCommand);
+            linkItem.setItemCommandListener(this);
             this.append(linkItem);
         }
         
