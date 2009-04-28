@@ -3,6 +3,7 @@ package it.unibz.readj2me.controller;
 import it.unibz.readj2me.model.Constants;
 import it.unibz.readj2me.model.Feed;
 import it.unibz.readj2me.model.NewsItem;
+import it.unibz.readj2me.model.Tag;
 import it.unibz.readj2me.view.Warning;
 import java.util.Enumeration;
 import java.util.Random;
@@ -64,7 +65,7 @@ public class PersistentManager {
     }
 
     public Vector loadFeeds() throws RecordStoreException, Exception {
-        RecordStore rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, false);
+        RecordStore rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, true);
         Vector items = new Vector();
 
         RecordEnumeration re = rs.enumerateRecords(null, new FeedComparator(), false);
@@ -73,6 +74,22 @@ public class PersistentManager {
             rawRecord = re.nextRecord();
             items.addElement(new Feed(rawRecord));
             //TODO handle parsing exception.. delete record?
+        }
+
+        rs.closeRecordStore();
+        return items;
+    }
+
+    public Vector loadTags() throws RecordStoreException, Exception {
+        RecordStore rs = RecordStore.openRecordStore(Constants.TAGS_RS_NAME, true);
+        Vector items = new Vector();
+
+        //TODO add TagComparator
+        RecordEnumeration re = rs.enumerateRecords(null, null, false);
+        byte[] rawRecord;
+        while(re.hasNextElement()) {
+            rawRecord = re.nextRecord();
+            items.addElement(new Tag(rawRecord));
         }
 
         rs.closeRecordStore();
@@ -166,6 +183,24 @@ public class PersistentManager {
         }
     }
 
+    public void addTag(String name) {
+        try {
+            RecordStore rs = RecordStore.openRecordStore(Constants.TAGS_RS_NAME, true);
+            Tag newTag = new Tag(name, rs.getNextRecordID());
+            byte[] row = newTag.getBytes();
+            rs.addRecord(row, 0, row.length);
+            rs.closeRecordStore();
+        } catch (RecordStoreFullException ex) {
+            ex.printStackTrace();
+            new Warning("adding tag", "1: " + ex.toString()).show();
+        } catch (RecordStoreException ex) {
+            ex.printStackTrace();
+            new Warning("adding tag", "2: " + ex.toString()).show();
+        } catch (Throwable t) {
+            new Warning("adding tag", "3: " + t.toString()).show();
+        }
+    }
+
     public void addFeed(String name, String url) {
         String rsItemsName;
         try {
@@ -241,6 +276,23 @@ public class PersistentManager {
             return;
         } catch (RecordStoreNotFoundException ex) {
             // nothing..
+            return;
+        } catch (RecordStoreException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void removeTag(Tag tag) {
+        RecordStore rs;
+        try {
+            rs = RecordStore.openRecordStore(Constants.TAGS_RS_NAME, false);
+            rs.deleteRecord(tag.getRs_id());
+            rs.closeRecordStore();
+        } catch (RecordStoreFullException ex) {
+            ex.printStackTrace();
+            return;
+        } catch (RecordStoreNotFoundException ex) {
+            ex.printStackTrace();
             return;
         } catch (RecordStoreException ex) {
             ex.printStackTrace();

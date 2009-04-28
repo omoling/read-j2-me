@@ -57,9 +57,6 @@ public class FeedList extends List implements CommandListener {
     }
 
     public void refreshList() {
-        //test
-        //Enumeration enumeration = this.items.elements();
-
         this.deleteAll();
         items.removeAllElements();
 
