@@ -1,6 +1,6 @@
 package it.unibz.readj2me.model;
 
-import it.unibz.readj2me.view.Warning;
+import it.unibz.readj2me.view.WarningAlert;
 
 /**
  *
@@ -41,7 +41,7 @@ public class Tag implements IPersistable {
                 rs_id = Integer.parseInt(tempRs_Id);
             } catch (Throwable t) {
                 //TODO: remove then..
-                new Warning("parsing tag id", "parsing tag id").show();
+                new WarningAlert("parsing tag id", "parsing tag id").show();
                 t.printStackTrace();
             }
         } catch (Throwable t) {

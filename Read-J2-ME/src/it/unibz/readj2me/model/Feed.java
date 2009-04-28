@@ -1,6 +1,6 @@
 package it.unibz.readj2me.model;
 
-import it.unibz.readj2me.view.Warning;
+import it.unibz.readj2me.view.WarningAlert;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -68,7 +68,7 @@ public class Feed implements IPersistable {
             } catch (Throwable t) {
                 //TODO
                 t.printStackTrace();
-                new Warning("parsing feed rs_id", "parsing feed rs_id").show();
+                new WarningAlert("parsing feed rs_id", "parsing feed rs_id").show();
             }
 
             while(index2 < dataString.length() - 1){

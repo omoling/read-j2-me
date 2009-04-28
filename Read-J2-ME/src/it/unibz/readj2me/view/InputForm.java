@@ -10,12 +10,12 @@ import javax.microedition.lcdui.Form;
  *
  * @author Anton Dignoes, Omar Moling
  */
-public abstract class InputView extends Form implements CommandListener {
+public abstract class InputForm extends Form implements CommandListener {
 
     protected Displayable parent;
     protected Command backCommand, saveCommand;
 
-    public InputView(String title, Displayable parent) {
+    public InputForm(String title, Displayable parent) {
         super(title);
         this.parent = parent;
 
@@ -33,18 +33,17 @@ public abstract class InputView extends Form implements CommandListener {
 
     public void commandAction(Command c, Displayable d) {
         if (c == backCommand) {
-            //nope
+            ReadJ2ME.showOnDisplay(parent);
         } else if (c == saveCommand) {
             if(isInputValid()){
                 save();
                 //TODO: if lists extend abstract class: call abstract refersh method
+                ReadJ2ME.showOnDisplay(parent);
             }
             /* what to show to the user if the input is not valid should be
              * defined in the implementation's isInputValid()
              */
         }
-
-        ReadJ2ME.showOnDisplay(parent);
     }
     
 }

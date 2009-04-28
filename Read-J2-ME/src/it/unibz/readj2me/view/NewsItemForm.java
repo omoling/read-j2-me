@@ -14,24 +14,26 @@ import javax.microedition.lcdui.StringItem;
  *
  * @author Anton Dignoes, Omar Moling
  */
-public class ItemView extends Form implements CommandListener, ItemCommandListener {
+public class NewsItemForm extends Form implements CommandListener, ItemCommandListener {
 
     private Displayable parent;
     private NewsItem newsItem;
-    private Command backCommand, openLinkCommand;
+    private Command backCommand, tagsCommand, openLinkCommand;
     private StringItem titleItem;
     private StringItem contentItem;
     private StringItem summaryItem;
     private StringItem linkItem;
 
-    public ItemView(NewsItem newsItem, Displayable parent) {
+    public NewsItemForm(NewsItem newsItem, Displayable parent) {
         super(newsItem.getTitle());
         this.newsItem = newsItem;
         this.parent = parent;
 
         backCommand = new Command("Back", Command.BACK, 0);
+        tagsCommand = new Command("Tags", Command.SCREEN, 0);
 
         this.addCommand(backCommand);
+        this.addCommand(tagsCommand);
         this.setCommandListener(this);
 
         populateView();
@@ -72,6 +74,9 @@ public class ItemView extends Form implements CommandListener, ItemCommandListen
     public void commandAction(Command c, Displayable d) {
         if (c == backCommand) {
             ReadJ2ME.showOnDisplay(parent);
+        } else if (c == tagsCommand) {
+            TagChoiceForm tagChoiceForm = new TagChoiceForm(newsItem, this);
+            ReadJ2ME.showOnDisplay(tagChoiceForm);
         }
     }
 

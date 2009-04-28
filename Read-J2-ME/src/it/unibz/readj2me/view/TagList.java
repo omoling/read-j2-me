@@ -56,9 +56,9 @@ public class TagList extends List implements CommandListener {
                 this.append(tag.getName(), ImageLoader.getImage(Constants.IMG_TAG));
             }
         } catch (RecordStoreException ex) {
-            new Warning("Error", "Some error while loading occurred.. " + ex.toString()).show();
+            new WarningAlert("Error", "Some error while loading occurred.. " + ex.toString()).show();
         } catch (Throwable ex) {
-            new Warning("Error", "Some error occurred.." + ex.toString()).show();
+            new WarningAlert("Error", "Some error occurred.." + ex.toString()).show();
         }
     }
 
@@ -66,11 +66,20 @@ public class TagList extends List implements CommandListener {
         if (c == backCommand) {
             ReadJ2ME.showOnDisplay(parent);
         } else if (c == addTagCommand) {
-            TagView tagView = new TagView(this);
+            TagForm tagView = new TagForm(this);
             ReadJ2ME.showOnDisplay(tagView);
         } else if (c == deleteTagCommand) {
-            //TODO
-            throw new UnsupportedOperationException("Not supported yet.");
+
+            //TODO: remove tag from all newsitems...
+
+            int index = this.getSelectedIndex();
+            if (index >= 0) {
+                Tag selectedTag = (Tag) items.elementAt(index);
+                PersistentManager.getInstance().removeTag(selectedTag);
+                //remove from vector and list
+                items.removeElementAt(index);
+                this.delete(index);
+            }
         }
     }
 
