@@ -1,5 +1,7 @@
 package it.unibz.readj2me.model;
 
+import it.unibz.readj2me.view.Warning;
+
 /**
  *
  * @author Anton Dignoes, Omar Moling
@@ -14,12 +16,39 @@ public class Tag implements IPersistable {
         this.rs_id = rs_id;
     }
 
+    public Tag(byte[] recordData) {
+        createFromBytes(recordData);
+    }
+
     public byte[] getBytes() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        StringBuffer sb = new StringBuffer();
+        sb.append(name);
+        sb.append(Constants.FIELD_SEPARATOR);
+        sb.append(rs_id);
+        sb.append(Constants.FIELD_SEPARATOR);
+        return sb.toString().getBytes();
     }
 
     public void createFromBytes(byte[] recordData) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            String recordString = new String(recordData);
+            int index1, index2;
+            index1 = recordString.indexOf(Constants.FIELD_SEPARATOR);
+            name = recordString.substring(0, index1);
+            index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
+            String tempRs_Id = recordString.substring(index1 + 1, index2);
+            try {
+                rs_id = Integer.parseInt(tempRs_Id);
+            } catch (Throwable t) {
+                //TODO: remove then..
+                new Warning("parsing tag id", "parsing tag id").show();
+                t.printStackTrace();
+            }
+        } catch (Throwable t) {
+            //TODO:
+            //throw new Exception("Parsing error in RecordStore");
+            t.printStackTrace();
+        }
     }
 
     /**

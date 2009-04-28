@@ -2,6 +2,7 @@ package it.unibz.readj2me.view;
 
 import it.unibz.readj2me.ReadJ2ME;
 import it.unibz.readj2me.controller.ImageLoader;
+import it.unibz.readj2me.controller.PersistentManager;
 import it.unibz.readj2me.model.Constants;
 import it.unibz.readj2me.model.Tag;
 import java.util.Enumeration;
@@ -10,6 +11,7 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
+import javax.microedition.rms.RecordStoreException;
 
 /**
  *
@@ -38,33 +40,38 @@ public class TagList extends List implements CommandListener {
         refreshList();
     }
 
-    private void refreshList() {
-
+    public void refreshList() {
         this.deleteAll();
         items.removeAllElements();
+
+        PersistentManager pm = PersistentManager.getInstance();
         Enumeration enumeration;
 
-        // add test data
-        items.addElement(new Tag("tag1", 1));
-        items.addElement(new Tag("tag2", 2));
-
-        // TODO get from RS
-        enumeration = items.elements();
-
-        Tag tag;
-        while(enumeration.hasMoreElements()){
-            tag = (Tag) enumeration.nextElement();
-            //items append...
-            this.append(tag.getName(), ImageLoader.getImage(Constants.IMG_TAG));
+        try {
+            enumeration = pm.loadTags().elements();
+            Tag tag;
+            while (enumeration.hasMoreElements()) {
+                tag = (Tag) enumeration.nextElement();
+                items.addElement(tag);
+                this.append(tag.getName(), ImageLoader.getImage(Constants.IMG_TAG));
+            }
+        } catch (RecordStoreException ex) {
+            new Warning("Error", "Some error while loading occurred.. " + ex.toString()).show();
+        } catch (Throwable ex) {
+            new Warning("Error", "Some error occurred.." + ex.toString()).show();
         }
-
     }
 
     public void commandAction(Command c, Displayable d) {
         if (c == backCommand) {
             ReadJ2ME.showOnDisplay(parent);
+        } else if (c == addTagCommand) {
+            TagView tagView = new TagView(this);
+            ReadJ2ME.showOnDisplay(tagView);
+        } else if (c == deleteTagCommand) {
+            //TODO
+            throw new UnsupportedOperationException("Not supported yet.");
         }
-        // TODO
     }
 
 }
