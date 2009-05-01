@@ -53,6 +53,7 @@ public class XmlReader {
                     if (event == XmlPullParser.START_TAG && xmlParser.getName().equals(TAG_ENTRY)) {
                         NewsItem item;
                         item = populateItem(xmlParser);
+
                         entries.addElement(item);
                     }
 

@@ -28,7 +28,8 @@ public class NewsItemList extends List implements CommandListener, Runnable {
     private Feed feed;
     private Vector items;
     private XmlReader xmlReader;
-    private Command backCommand,  openCommand,  updateCommand,  deleteItemCommand,  markUnreadCommand;
+    private Command backCommand,  openCommand,  updateCommand,
+            deleteItemCommand,  markUnreadCommand;
 
     public NewsItemList(Feed feed, Displayable parent) {
         super(feed.getName(), List.IMPLICIT);
@@ -60,7 +61,7 @@ public class NewsItemList extends List implements CommandListener, Runnable {
 
         try {
             //TODO: handle d*** exceptions
-            items = PersistentManager.getInstance().loadNewsItems(feed.getItemsRecordStoreName());
+            items = PersistentManager.getInstance().loadNewsItems(getFeed().getItemsRecordStoreName());
 
         } catch (RecordStoreException ex) {
             ex.printStackTrace();
@@ -96,8 +97,8 @@ public class NewsItemList extends List implements CommandListener, Runnable {
 
         this.setTicker(updateTicker);
         xmlReader = XmlReader.getInstance();
-        Vector newItems = xmlReader.getEntries(feed.getUrl());
-        PersistentManager.getInstance().addNewsItems(feed, newItems);
+        Vector newItems = xmlReader.getEntries(getFeed().getUrl());
+        PersistentManager.getInstance().addNewsItems(getFeed(),newItems);
         updateList();
 
         //TODO: remove from feed's IDs-vector those IDs that are not present in the feed anymore
@@ -123,25 +124,25 @@ public class NewsItemList extends List implements CommandListener, Runnable {
 
             if (c == markUnreadCommand) {
                 selectedItem.setRead(false);
-                PersistentManager.getInstance().updateNewsItem(selectedItem, feed.getItemsRecordStoreName());
+                PersistentManager.getInstance().updateNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
                 //update list and vector
                 this.set(index, selectedItem.getTitle(), ImageLoader.getImage(Constants.IMG_DEFAULT_FEED));
                 this.setFont(index, Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
 
             } else if (c == deleteItemCommand) {
-                PersistentManager.getInstance().removeNewsItem(selectedItem, feed.getItemsRecordStoreName());
+                PersistentManager.getInstance().removeNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
                 //update list and vector
                 this.delete(index);
                 items.removeElementAt(index);
 
             } else if (c == openCommand || d == this) {
                 //show view
-                NewsItemForm itemView = new NewsItemForm(selectedItem, this);
+                NewsItemForm itemView = new NewsItemForm(selectedItem, feed.getItemsRecordStoreName(), this);
                 ReadJ2ME.showOnDisplay(itemView);
                 //update item's read-status
                 if (!selectedItem.isRead()) {
                     selectedItem.setRead(true);
-                    PersistentManager.getInstance().updateNewsItem(selectedItem, feed.getItemsRecordStoreName());
+                    PersistentManager.getInstance().updateNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
                     this.setFont(index, Font.getDefaultFont());
                     this.set(index, selectedItem.getTitle(), ImageLoader.getImage(Constants.IMG_GREY_FEED));
                 }
@@ -150,5 +151,12 @@ public class NewsItemList extends List implements CommandListener, Runnable {
         } else {
             new WarningAlert("Info", "No item! Perform an update..").show();
         }
+    }
+
+    /**
+     * @return the feed
+     */
+    public Feed getFeed() {
+        return feed;
     }
 }

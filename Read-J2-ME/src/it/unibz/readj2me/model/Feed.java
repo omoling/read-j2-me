@@ -71,6 +71,7 @@ public class Feed implements IPersistable {
                 new WarningAlert("parsing feed rs_id", "parsing feed rs_id").show();
             }
 
+            //last character must be "|"
             while(index2 < dataString.length() - 1){
                 index1 = index2;
                 index2 = dataString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
