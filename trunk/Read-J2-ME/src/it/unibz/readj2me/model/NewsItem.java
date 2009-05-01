@@ -1,6 +1,8 @@
 package it.unibz.readj2me.model;
 
 import it.unibz.readj2me.view.WarningAlert;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  *
@@ -10,12 +12,13 @@ public class NewsItem implements IPersistable {
 
     private String id = "";
     private String title = "";
-    private String published;
-    private String updated;
+    private String published = "";
+    private String updated = "";
     private String link = "";
     private String content = "";
     private String summary = "";
     private boolean read = false;
+    private Vector tags = new Vector();
     private int rs_id;
 
     public NewsItem() {
@@ -48,6 +51,13 @@ public class NewsItem implements IPersistable {
         }
         sb.append(Constants.FIELD_SEPARATOR);
         sb.append(rs_id);
+        sb.append(Constants.FIELD_SEPARATOR);
+
+        Enumeration enumeration = getTags().elements();
+        while(enumeration.hasMoreElements()){
+            sb.append(enumeration.nextElement().toString());
+            sb.append(Constants.FIELD_SEPARATOR);
+        }
         return sb.toString().getBytes();
     }
 
@@ -83,13 +93,21 @@ public class NewsItem implements IPersistable {
                 read = false;
             }
             index1 = index2;
-            String tempRs_Id = recordString.substring(index1 + 1, recordString.length());
+            index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
+            String tempRs_Id = recordString.substring(index1 + 1, index2);
             try {
                 rs_id = Integer.parseInt(tempRs_Id);
             } catch (Throwable t) {
                 //TODO: remove then..
                 new WarningAlert("parsing newsitem id", "parsing newsitem id").show();
                 t.printStackTrace();
+            }
+
+            //last character must be "|"
+            while(index2 < recordString.length() - 1){
+                index1 = index2;
+                index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
+                getTags().addElement(recordString.substring(index1 + 1, index2));
             }
 
         } catch (Throwable t) {
@@ -223,5 +241,19 @@ public class NewsItem implements IPersistable {
      */
     public void setRs_id(int rs_id) {
         this.rs_id = rs_id;
+    }
+
+    /**
+     * @return the tags
+     */
+    public Vector getTags() {
+        return tags;
+    }
+
+    /**
+     * @param tags the tags to set
+     */
+    public void setTags(Vector tags) {
+        this.tags = tags;
     }
 }

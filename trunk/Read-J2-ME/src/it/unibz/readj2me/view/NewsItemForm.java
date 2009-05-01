@@ -2,6 +2,7 @@ package it.unibz.readj2me.view;
 
 import it.unibz.readj2me.ReadJ2ME;
 import it.unibz.readj2me.model.NewsItem;
+import it.unibz.readj2me.model.Tag;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
@@ -19,15 +20,14 @@ public class NewsItemForm extends Form implements CommandListener, ItemCommandLi
     private Displayable parent;
     private NewsItem newsItem;
     private Command backCommand, tagsCommand, openLinkCommand;
-    private StringItem titleItem;
-    private StringItem contentItem;
-    private StringItem summaryItem;
-    private StringItem linkItem;
+    private StringItem titleItem, tagsItem, contentItem, summaryItem, linkItem;
+    private String itemRsName;
 
-    public NewsItemForm(NewsItem newsItem, Displayable parent) {
+    public NewsItemForm(NewsItem newsItem, String itemRsName, Displayable parent) {
         super(newsItem.getTitle());
         this.newsItem = newsItem;
         this.parent = parent;
+        this.itemRsName = itemRsName;
 
         backCommand = new Command("Back", Command.BACK, 0);
         tagsCommand = new Command("Tags", Command.SCREEN, 0);
@@ -39,13 +39,30 @@ public class NewsItemForm extends Form implements CommandListener, ItemCommandLi
         populateView();
     }
 
-    private void populateView() {
+    public void populateView() {
+        this.deleteAll();
         
         if (newsItem.getTitle() != null && !newsItem.getTitle().equals("")){
             titleItem = new StringItem(null, newsItem.getTitle());
             titleItem.setLayout(Item.LAYOUT_LEFT);
             titleItem.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
             this.append(titleItem);
+        }
+        if (newsItem.getTags() != null && newsItem.getTags().size() > 0) {
+            StringBuffer sb = new StringBuffer("");
+            int size = newsItem.getTags().size();
+            Tag tag;
+            for(int i = 0; i < size; i++) {
+                tag = (Tag) newsItem.getTags().elementAt(i);
+                sb.append(tag.getName());
+                if (i < size -1) {
+                    sb.append(", ");
+                }
+            }
+            tagsItem = new StringItem("Tags:", sb.toString());
+            tagsItem.setLayout(Item.LAYOUT_LEFT);
+            tagsItem.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
+            this.append(tagsItem);
         }
         if (newsItem.getContent() != null && !newsItem.getContent().equals("")) {
             contentItem = new StringItem(null, newsItem.getContent());
@@ -75,7 +92,7 @@ public class NewsItemForm extends Form implements CommandListener, ItemCommandLi
         if (c == backCommand) {
             ReadJ2ME.showOnDisplay(parent);
         } else if (c == tagsCommand) {
-            TagChoiceForm tagChoiceForm = new TagChoiceForm(newsItem, this);
+            TagChoiceForm tagChoiceForm = new TagChoiceForm(newsItem, itemRsName, this);
             ReadJ2ME.showOnDisplay(tagChoiceForm);
         }
     }
@@ -85,4 +102,5 @@ public class NewsItemForm extends Form implements CommandListener, ItemCommandLi
             ReadJ2ME.platReq(newsItem.getLink());
         }
     }
+    
 }

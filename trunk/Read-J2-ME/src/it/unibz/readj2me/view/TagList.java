@@ -42,7 +42,7 @@ public class TagList extends List implements CommandListener {
 
     public void refreshList() {
         this.deleteAll();
-        items.removeAllElements();
+        getItems().removeAllElements();
 
         PersistentManager pm = PersistentManager.getInstance();
         Enumeration enumeration;
@@ -52,7 +52,7 @@ public class TagList extends List implements CommandListener {
             Tag tag;
             while (enumeration.hasMoreElements()) {
                 tag = (Tag) enumeration.nextElement();
-                items.addElement(tag);
+                getItems().addElement(tag);
                 this.append(tag.getName(), ImageLoader.getImage(Constants.IMG_TAG));
             }
         } catch (RecordStoreException ex) {
@@ -74,13 +74,20 @@ public class TagList extends List implements CommandListener {
 
             int index = this.getSelectedIndex();
             if (index >= 0) {
-                Tag selectedTag = (Tag) items.elementAt(index);
+                Tag selectedTag = (Tag) getItems().elementAt(index);
                 PersistentManager.getInstance().removeTag(selectedTag);
                 //remove from vector and list
-                items.removeElementAt(index);
+                getItems().removeElementAt(index);
                 this.delete(index);
             }
         }
+    }
+
+    /**
+     * @return the items
+     */
+    public Vector getItems() {
+        return items;
     }
 
 }

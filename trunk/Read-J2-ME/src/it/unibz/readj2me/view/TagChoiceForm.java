@@ -25,11 +25,13 @@ public class TagChoiceForm extends InputForm implements CommandListener, ItemSta
     private Command addTagCommand;
     private Vector items;
     private NewsItem newsItem;
+    private String itemRsName;
     private boolean changed = false;
 
-    public TagChoiceForm(NewsItem newsItem, Displayable parent){
-        super("Available Tags, parent", parent);
+    public TagChoiceForm(NewsItem newsItem, String itemRsName, Displayable parent){
+        super("Available Tags", parent);
         this.newsItem = newsItem;
+        this.itemRsName = itemRsName;
         items = new Vector();
 
         tagsChoice = new ChoiceGroup("Select tags:", Choice.MULTIPLE);
@@ -45,18 +47,18 @@ public class TagChoiceForm extends InputForm implements CommandListener, ItemSta
     }
 
     public void refreshChoice() {
-        items.removeAllElements();
+        getItems().removeAllElements();
         tagsChoice.deleteAll();
 
         PersistentManager pm = PersistentManager.getInstance();
         Enumeration enumeration;
+        Tag tag;
 
         try {
             enumeration = pm.loadTags().elements();
-            Tag tag;
             while (enumeration.hasMoreElements()) {
                 tag = (Tag) enumeration.nextElement();
-                items.addElement(tag);
+                getItems().addElement(tag);
                 tagsChoice.append(tag.getName(), null);
             }
         } catch (RecordStoreException ex) {
@@ -65,23 +67,39 @@ public class TagChoiceForm extends InputForm implements CommandListener, ItemSta
             new WarningAlert("Error", "Some error occurred.." + ex.toString()).show();
         }
 
-        //TODO: if newsitem tagged with tag, set selected
-        //iterate items and set in tagsChoice
-        //tagsChoice.setSelectedIndex(elementNum, true);
+        //set tagged tags to selected on the Choice
+        if (!getItems().isEmpty()) {
+            for (int i = 0; i < getItems().size(); i++) {
+                tag = (Tag) getItems().elementAt(i);
+                if (newsItem.getTags().contains(tag)) {
+                    tagsChoice.setSelectedIndex(i, true);
+                }
+            }
+        }
 
         
     }
 
     protected void save() {
         if (changed) {
-            //TODO: save tags in newsitem
+            boolean[] settings = new boolean[tagsChoice.size()];
+            tagsChoice.getSelectedFlags(settings);
+            if(settings != null && settings.length > 0) {
+                Vector newTags = new Vector();
+                for (int i = 0; i < settings.length; i++) {
+                    if (settings[i]) {
+                        newTags.addElement(getItems().elementAt(i));
+                    }
+                }
+                newsItem.setTags(newTags);
+                PersistentManager.getInstance().updateNewsItem(newsItem, itemRsName);
+                ((NewsItemForm) parent).populateView();
+            }
         }
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     protected boolean isInputValid() {
-        //TODO: always true?
-        throw new UnsupportedOperationException("Not supported yet.");
+        return true;
     }
 
     public void commandAction(Command c, Displayable d) {
@@ -97,5 +115,12 @@ public class TagChoiceForm extends InputForm implements CommandListener, ItemSta
         if (item == tagsChoice) {
             changed = true;
         }
+    }
+
+    /**
+     * @return the items
+     */
+    public Vector getItems() {
+        return items;
     }
 }
