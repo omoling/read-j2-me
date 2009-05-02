@@ -8,6 +8,7 @@ public class Constants {
 
     // RECORD STORE
     public static final char FIELD_SEPARATOR = '|';
+    public static final char VECTOR_SEPARATOR = '*';
     public static final String RS_PREFIX = "rj2me_";
     public static final String FEED_RS_NAME = RS_PREFIX + "feeds";
     public static final String TAGS_RS_NAME = RS_PREFIX + "tags";

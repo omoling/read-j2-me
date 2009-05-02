@@ -9,6 +9,7 @@ import java.util.Enumeration;
 import java.util.Random;
 import java.util.Vector;
 import javax.microedition.rms.RecordEnumeration;
+import javax.microedition.rms.RecordFilter;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
@@ -95,12 +96,11 @@ public class PersistentManager {
         return items;
     }
 
-    public Vector loadNewsItems(String rsName) throws RecordStoreException, Exception {
-
+    public Vector loadNewsItems(String rsName, RecordFilter filter) throws RecordStoreException, Exception {
         RecordStore rs = RecordStore.openRecordStore(rsName, false);
         Vector items = new Vector();
 
-        RecordEnumeration re = rs.enumerateRecords(null, new NewsItemComparator(), false);
+        RecordEnumeration re = rs.enumerateRecords(filter, new NewsItemComparator(), false);
         byte[] rawRecord;
         while(re.hasNextElement()) {
             rawRecord = re.nextRecord();
@@ -109,6 +109,10 @@ public class PersistentManager {
 
         rs.closeRecordStore();
         return items;
+    }
+
+    public Vector loadNewsItems(String rsName) throws RecordStoreException, Exception {
+        return loadNewsItems(rsName, null);
     }
 
     public void addNewsItems(Feed feed, Vector items) {
@@ -151,8 +155,6 @@ public class PersistentManager {
 
     public void updateNewsItem(NewsItem item, String rsName){
         try {
-            //removeNewsItem(item, rsName);
-            //addNewsItem(item, rsName);
             RecordStore rs = RecordStore.openRecordStore(rsName, false);
             byte[] row = item.getBytes();
             rs.setRecord(item.getRs_id(), row, 0, row.length);
@@ -222,7 +224,7 @@ public class PersistentManager {
     }
 
     /*
-     * NOT used at the moment
+     * NOT used
     public void addFeed(Feed feed) {
         try {
             RecordStore rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, true);
@@ -239,7 +241,7 @@ public class PersistentManager {
     */
 
     /*
-     * NOT used at the moment
+     * NOT used
     public void addNewsItem(NewsItem item, String rsName){
         try {
             RecordStore rs = RecordStore.openRecordStore(rsName, false);
@@ -262,14 +264,8 @@ public class PersistentManager {
         RecordStore rs;
         try{
             rs = RecordStore.openRecordStore(rsName, false);
-            RecordEnumeration re = rs.enumerateRecords(new NewsItemFilter(item.getId()), null, false);
-
-            while (re.hasNextElement()) {
-                rs.deleteRecord(re.nextRecordId());
-            }
-
+            rs.deleteRecord(item.getRs_id());
             rs.closeRecordStore();
-
         } catch (RecordStoreFullException ex) {
             ex.printStackTrace();
             return;
@@ -302,20 +298,8 @@ public class PersistentManager {
         RecordStore rs;
         try {
             rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, false);
-
             rs.deleteRecord(feed.getRs_id());
-
-            /* TODO: to be removed (check) since record-id stored now in feed-object
-            //find the one record
-            RecordEnumeration re = rs.enumerateRecords(new FeedFilter(feed.getUrl()), null, false);
-
-            while (re.hasNextElement()) {
-                rs.deleteRecord(re.nextRecordId());
-            }
-            */
-
             rs.closeRecordStore();
-
             if(removeItemsRecordStore){
                 RecordStore.deleteRecordStore(feed.getItemsRecordStoreName());
             }

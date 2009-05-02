@@ -54,7 +54,6 @@ public class TagForm extends InputForm {
             ex.printStackTrace();
         }
 
-        System.out.println("tagIsFree: " + tagIsFree);
         if (getName() != null && !getName().equals("") && tagIsFree) {
             return true;
         } else {
