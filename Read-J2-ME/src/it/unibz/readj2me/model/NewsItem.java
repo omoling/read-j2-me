@@ -53,9 +53,11 @@ public class NewsItem implements IPersistable {
         sb.append(rs_id);
         sb.append(Constants.FIELD_SEPARATOR);
 
+        Tag tag;
         Enumeration enumeration = getTags().elements();
         while(enumeration.hasMoreElements()){
-            sb.append(enumeration.nextElement().toString());
+            tag = (Tag) enumeration.nextElement();
+            sb.append(tag.getName() + Constants.VECTOR_SEPARATOR + tag.getRs_id());
             sb.append(Constants.FIELD_SEPARATOR);
         }
         return sb.toString().getBytes();
@@ -103,11 +105,24 @@ public class NewsItem implements IPersistable {
                 t.printStackTrace();
             }
 
+            Tag tag;
+            String tempString, tempName;
+            int tempIndex, tempRsId = -1;
             //last character must be "|"
             while(index2 < recordString.length() - 1){
                 index1 = index2;
                 index2 = recordString.indexOf(Constants.FIELD_SEPARATOR, index1 + 1);
-                getTags().addElement(recordString.substring(index1 + 1, index2));
+                tempString = recordString.substring(index1 + 1, index2);
+                tempIndex = tempString.indexOf(Constants.VECTOR_SEPARATOR);
+                tempName = tempString.substring(0, tempIndex);
+                try {
+                    tempRsId = Integer.parseInt(tempString.substring(tempIndex + 1, tempString.length()));
+                } catch (NumberFormatException ex) {
+                    //TODO
+                    ex.printStackTrace();
+                }
+                tag = new Tag(tempName, tempRsId);
+                getTags().addElement(tag);
             }
 
         } catch (Throwable t) {

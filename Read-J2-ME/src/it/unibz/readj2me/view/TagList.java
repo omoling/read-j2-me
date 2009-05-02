@@ -2,8 +2,11 @@ package it.unibz.readj2me.view;
 
 import it.unibz.readj2me.ReadJ2ME;
 import it.unibz.readj2me.controller.ImageLoader;
+import it.unibz.readj2me.controller.NewsItemTagFilter;
 import it.unibz.readj2me.controller.PersistentManager;
 import it.unibz.readj2me.model.Constants;
+import it.unibz.readj2me.model.Feed;
+import it.unibz.readj2me.model.NewsItem;
 import it.unibz.readj2me.model.Tag;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -69,16 +72,50 @@ public class TagList extends List implements CommandListener {
             TagForm tagView = new TagForm(this);
             ReadJ2ME.showOnDisplay(tagView);
         } else if (c == deleteTagCommand) {
-
-            //TODO: remove tag from all newsitems...
-
             int index = this.getSelectedIndex();
             if (index >= 0) {
-                Tag selectedTag = (Tag) getItems().elementAt(index);
-                PersistentManager.getInstance().removeTag(selectedTag);
-                //remove from vector and list
-                getItems().removeElementAt(index);
-                this.delete(index);
+                try {
+                    Tag selectedTag = (Tag) getItems().elementAt(index);
+                    PersistentManager pm = PersistentManager.getInstance();
+
+                    //TODO: may be refactored
+                    //remove tag from ALL newsitems
+                    Vector newsItems, tags, feeds = pm.loadFeeds();
+                    Enumeration enumNewsItems, enumFeeds = feeds.elements();
+                    Feed currentFeed;
+                    NewsItem currentNewsItem;
+                    while (enumFeeds.hasMoreElements()) {
+                        currentFeed = (Feed) enumFeeds.nextElement();
+                        newsItems = pm.loadNewsItems(currentFeed.getItemsRecordStoreName(),
+                                new NewsItemTagFilter(selectedTag));
+                        enumNewsItems = newsItems.elements();
+                        while (enumNewsItems.hasMoreElements()) {
+                            currentNewsItem = (NewsItem) enumNewsItems.nextElement();
+                            tags = currentNewsItem.getTags();
+                            int tagIndex = -1;
+                            for (int i = 0; i < tags.size(); i++) {
+                                if (((Tag)tags.elementAt(i)).equals(selectedTag)) {
+                                    tagIndex = i;
+                                    break;
+                                }
+                            }
+                            tags.removeElementAt(tagIndex);
+                            currentNewsItem.setTags(tags);
+                            pm.updateNewsItem(currentNewsItem, currentFeed.getItemsRecordStoreName());
+                        }
+                    }
+
+                    pm.removeTag(selectedTag);
+                    //remove from vector and list
+                    getItems().removeElementAt(index);
+                    this.delete(index);
+
+                //TODO!!
+                } catch (RecordStoreException ex) {
+                    ex.printStackTrace();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         }
     }

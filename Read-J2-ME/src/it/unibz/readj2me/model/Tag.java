@@ -52,6 +52,17 @@ public class Tag implements IPersistable {
     }
 
     /**
+     * Custom equals
+     */
+    public boolean equals(Tag tag) {
+        if (tag.getName().equals(name) && tag.getRs_id() == rs_id) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * @return the name
      */
     public String getName() {

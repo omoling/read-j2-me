@@ -47,7 +47,7 @@ public class TagChoiceForm extends InputForm implements CommandListener, ItemSta
     }
 
     public void refreshChoice() {
-        getItems().removeAllElements();
+        items.removeAllElements();
         tagsChoice.deleteAll();
 
         PersistentManager pm = PersistentManager.getInstance();
@@ -58,7 +58,7 @@ public class TagChoiceForm extends InputForm implements CommandListener, ItemSta
             enumeration = pm.loadTags().elements();
             while (enumeration.hasMoreElements()) {
                 tag = (Tag) enumeration.nextElement();
-                getItems().addElement(tag);
+                items.addElement(tag);
                 tagsChoice.append(tag.getName(), null);
             }
         } catch (RecordStoreException ex) {
@@ -68,15 +68,16 @@ public class TagChoiceForm extends InputForm implements CommandListener, ItemSta
         }
 
         //set tagged tags to selected on the Choice
-        if (!getItems().isEmpty()) {
-            for (int i = 0; i < getItems().size(); i++) {
-                tag = (Tag) getItems().elementAt(i);
-                if (newsItem.getTags().contains(tag)) {
-                    tagsChoice.setSelectedIndex(i, true);
+        if (newsItem.getTags().size() > 0) {
+            for(int y = 0; y < newsItem.getTags().size(); y++) {
+                tag = (Tag) newsItem.getTags().elementAt(y);
+                for (int i = 0; i < tagsChoice.size(); i++) {
+                    if (tagsChoice.getString(i).equals(tag.getName())) {
+                        tagsChoice.setSelectedIndex(i, true);
+                    }
                 }
             }
         }
-
         
     }
 
@@ -88,7 +89,7 @@ public class TagChoiceForm extends InputForm implements CommandListener, ItemSta
                 Vector newTags = new Vector();
                 for (int i = 0; i < settings.length; i++) {
                     if (settings[i]) {
-                        newTags.addElement(getItems().elementAt(i));
+                        newTags.addElement(items.elementAt(i));
                     }
                 }
                 newsItem.setTags(newTags);
@@ -117,10 +118,4 @@ public class TagChoiceForm extends InputForm implements CommandListener, ItemSta
         }
     }
 
-    /**
-     * @return the items
-     */
-    public Vector getItems() {
-        return items;
-    }
 }
