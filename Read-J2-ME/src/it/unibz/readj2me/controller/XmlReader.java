@@ -37,7 +37,7 @@ public class XmlReader {
         return xmlReader;
     }
 
-    public Vector getEntries(String feedUrl) {
+    public Vector getEntries(String feedUrl) throws IOException {
 
         Vector entries = new Vector();
         KXmlParser xmlParser = new KXmlParser();

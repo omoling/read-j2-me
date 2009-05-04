@@ -7,13 +7,13 @@ import it.unibz.readj2me.controller.XmlReader;
 import it.unibz.readj2me.model.Constants;
 import it.unibz.readj2me.model.Feed;
 import it.unibz.readj2me.model.NewsItem;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Vector;
 import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
-import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.Ticker;
 import javax.microedition.rms.RecordStoreException;
@@ -62,7 +62,6 @@ public class NewsItemList extends List implements CommandListener, Runnable {
         try {
             //TODO: handle d*** exceptions
             items = PersistentManager.getInstance().loadNewsItems(getFeed().getItemsRecordStoreName());
-
         } catch (RecordStoreException ex) {
             ex.printStackTrace();
         } catch (Exception ex) {
@@ -72,6 +71,7 @@ public class NewsItemList extends List implements CommandListener, Runnable {
         NewsItem item;
         items.trimToSize();
         Enumeration enumeration = items.elements();
+        
         while (enumeration.hasMoreElements()) {
             item = (NewsItem) enumeration.nextElement();
             if (item.isRead()) {
@@ -82,13 +82,15 @@ public class NewsItemList extends List implements CommandListener, Runnable {
         }
 
         //set bold-font if unread
-        for (int i = 0; i < this.size(); i++) {
+        /*had to be removed because of emulator bug on setFont
+        for (int i = 0; i < items.size(); i++) {
             item = (NewsItem) items.elementAt(i);
 
             if (!item.isRead()) {
                 this.setFont(i, Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
             }
         }
+        */
         item = null;
     }
 
@@ -97,13 +99,19 @@ public class NewsItemList extends List implements CommandListener, Runnable {
 
         this.setTicker(updateTicker);
         xmlReader = XmlReader.getInstance();
-        Vector newItems = xmlReader.getEntries(getFeed().getUrl());
-        PersistentManager.getInstance().addNewsItems(getFeed(),newItems);
-        updateList();
-
-        //TODO: remove from feed's IDs-vector those IDs that are not present in the feed anymore
-
-        this.setTicker(null);
+        Vector newItems;
+        try {
+            newItems = xmlReader.getEntries(getFeed().getUrl());
+            PersistentManager.getInstance().addNewsItems(getFeed(),newItems);
+            updateList();
+            //TODO: remove from feed's IDs-vector those IDs that are not present in the feed anymore
+            
+        } catch (IOException ex) {
+            new ErrorAlert("Network", "Could not retrieve any data. Check the URL on its correctness.").show();
+        } finally {
+            xmlReader = null;
+            this.setTicker(null);
+        }
     }
 
     public void commandAction(Command c, Displayable d) {
@@ -127,8 +135,8 @@ public class NewsItemList extends List implements CommandListener, Runnable {
                 PersistentManager.getInstance().updateNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
                 //update list and vector
                 this.set(index, selectedItem.getTitle(), ImageLoader.getImage(Constants.IMG_DEFAULT_FEED));
-                this.setFont(index, Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
-
+                //had to be removed because of emulator bug on setFont
+                //this.setFont(index, Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
             } else if (c == deleteItemCommand) {
                 PersistentManager.getInstance().removeNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
                 //update list and vector
@@ -143,7 +151,8 @@ public class NewsItemList extends List implements CommandListener, Runnable {
                 if (!selectedItem.isRead()) {
                     selectedItem.setRead(true);
                     PersistentManager.getInstance().updateNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
-                    this.setFont(index, Font.getDefaultFont());
+                    //had to be removed because of emulator bug on setFont
+                    //this.setFont(index, Font.getDefaultFont());
                     this.set(index, selectedItem.getTitle(), ImageLoader.getImage(Constants.IMG_GREY_FEED));
                 }
             }

@@ -62,6 +62,7 @@ public class NewsItemForm extends Form implements CommandListener, ItemCommandLi
             tagsItem = new StringItem("Tags:", sb.toString());
             tagsItem.setLayout(Item.LAYOUT_LEFT);
             tagsItem.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
+            tagsItem.setLayout(Item.LAYOUT_NEWLINE_AFTER);
             this.append(tagsItem);
         }
         if (newsItem.getContent() != null && !newsItem.getContent().equals("")) {
