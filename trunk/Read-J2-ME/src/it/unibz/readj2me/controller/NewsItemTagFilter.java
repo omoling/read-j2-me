@@ -11,11 +11,9 @@ import javax.microedition.rms.RecordFilter;
  */
 public class NewsItemTagFilter implements RecordFilter {
 
-    //private Tag filterTag;
     private Vector filterTags;
 
     public NewsItemTagFilter(Tag tag){
-        //this.filterTag = tag;
         filterTags = new Vector();
         filterTags.addElement(tag);
     }
@@ -26,7 +24,6 @@ public class NewsItemTagFilter implements RecordFilter {
 
     public boolean matches(byte[] candidate) {
         NewsItem candidateNewsItem = new NewsItem(candidate);
-        //String nameFilter = filterTag.getName();
         String nameCandidateTag, nameFilterTag;
         for (int i = 0; i < candidateNewsItem.getTags().size(); i++) {
             nameCandidateTag = ((Tag) candidateNewsItem.getTags().elementAt(i)).getName();

@@ -65,7 +65,7 @@ public class PersistentManager {
         return true;
     }
 
-    public Vector loadFeeds() throws RecordStoreException, Exception {
+    public Vector loadFeeds() throws RecordStoreException {
         RecordStore rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, true);
         Vector items = new Vector();
 
@@ -74,14 +74,13 @@ public class PersistentManager {
         while(re.hasNextElement()){
             rawRecord = re.nextRecord();
             items.addElement(new Feed(rawRecord));
-            //TODO handle parsing exception.. delete record?
         }
 
         rs.closeRecordStore();
         return items;
     }
 
-    public Vector loadTags() throws RecordStoreException, Exception {
+    public Vector loadTags() throws RecordStoreException {
         RecordStore rs = RecordStore.openRecordStore(Constants.TAGS_RS_NAME, true);
         Vector items = new Vector();
 
@@ -96,7 +95,7 @@ public class PersistentManager {
         return items;
     }
 
-    public Vector loadNewsItems(String rsName, RecordFilter filter) throws RecordStoreException, Exception {
+    public Vector loadNewsItems(String rsName, RecordFilter filter) throws RecordStoreException {
         RecordStore rs = RecordStore.openRecordStore(rsName, false);
         Vector items = new Vector();
 
@@ -111,45 +110,30 @@ public class PersistentManager {
         return items;
     }
 
-    public Vector loadNewsItems(String rsName) throws RecordStoreException, Exception {
+    public Vector loadNewsItems(String rsName) throws RecordStoreException {
         return loadNewsItems(rsName, null);
     }
 
-    public void addNewsItems(Feed feed, Vector items) {
+    public void addNewsItems(Feed feed, Vector items) throws RecordStoreFullException, Exception {
         RecordStore rs;
-        try {
-            rs = RecordStore.openRecordStore(feed.getItemsRecordStoreName(), true);
-
-            boolean feedChanged = false;
-
-            Enumeration enumeration = items.elements();
-            NewsItem item;
-            while(enumeration.hasMoreElements()){
-                item = (NewsItem)enumeration.nextElement();
-                if(!feed.getKnownIds().contains(item.getId())){
-                    int nextId = rs.getNextRecordID();
-                    item.setRs_id(nextId);
-                    byte[] row = item.getBytes();
-                    rs.addRecord(row, 0, row.length);
-                    feed.getKnownIds().addElement(item.getId());
-                    feedChanged = true;
-                }
+        rs = RecordStore.openRecordStore(feed.getItemsRecordStoreName(), true);
+        boolean feedChanged = false;
+        Enumeration enumeration = items.elements();
+        NewsItem item;
+        while (enumeration.hasMoreElements()) {
+            item = (NewsItem) enumeration.nextElement();
+            if (!feed.getKnownIds().contains(item.getId())) {
+                int nextId = rs.getNextRecordID();
+                item.setRs_id(nextId);
+                byte[] row = item.getBytes();
+                rs.addRecord(row, 0, row.length);
+                feed.getKnownIds().addElement(item.getId());
+                feedChanged = true;
             }
-            rs.closeRecordStore();
-
-            if(feedChanged){
-                updateFeed(feed);
-            }
-
-        //TODO
-        } catch (RecordStoreFullException ex) {
-            ex.printStackTrace();
-        } catch (RecordStoreNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (RecordStoreException ex) {
-            ex.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+        rs.closeRecordStore();
+        if (feedChanged) {
+            updateFeed(feed);
         }
     }
 
@@ -222,43 +206,6 @@ public class PersistentManager {
         }
 
     }
-
-    /*
-     * NOT used
-    public void addFeed(Feed feed) {
-        try {
-            RecordStore rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, true);
-            byte[] row = feed.getBytes();
-     * // rs_id
-            rs.addRecord(row, 0, row.length);
-            rs.closeRecordStore();
-        } catch (RecordStoreFullException ex) {
-            ex.printStackTrace();
-        } catch (RecordStoreException ex) {
-            ex.printStackTrace();
-        }
-    }
-    */
-
-    /*
-     * NOT used
-    public void addNewsItem(NewsItem item, String rsName){
-        try {
-            RecordStore rs = RecordStore.openRecordStore(rsName, false);
-            int nextId = rs.getNextRecordID();
-            item.setRs_id(nextId);
-            byte[] row = item.getBytes();
-            rs.addRecord(row, 0, row.length);
-            rs.closeRecordStore();
-        } catch (RecordStoreFullException ex) {
-            ex.printStackTrace();
-        } catch (RecordStoreNotFoundException ex) {
-            //nothing
-        } catch (RecordStoreException ex) {
-            ex.printStackTrace();
-        }
-    }
-    */
 
     public void removeNewsItem(NewsItem item, String rsName){
         RecordStore rs;
