@@ -14,3 +14,4 @@ Collection of useful links for the implementation of the project's functionaliti
   * Java-parsing class for RFC3339 dates: http://hatori42.com/RFC3339Date.txt
   * Date in J2me.. : http://www.velocityreviews.com/forums/showthread.php?s=7db4625b02c847101d6f948f8b49bce9&t=126578&page=2&pp=10
   * other date-class: http://mindprod.com/jgloss/bigdate.html
+  * setFont bug in WTK2 emulator: http://discussion.forum.nokia.com/forum/showthread.php?t=160403&page=2
