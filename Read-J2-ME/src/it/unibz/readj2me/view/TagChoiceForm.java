@@ -61,24 +61,23 @@ public class TagChoiceForm extends InputForm implements CommandListener, ItemSta
                 items.addElement(tag);
                 tagsChoice.append(tag.getName(), null);
             }
-        } catch (RecordStoreException ex) {
-            new WarningAlert("Error", "Some error while loading occurred.. " + ex.toString()).show();
-        } catch (Throwable ex) {
-            new WarningAlert("Error", "Some error occurred.." + ex.toString()).show();
-        }
 
-        //set tagged tags to selected on the Choice
-        if (newsItem.getTags().size() > 0) {
-            for(int y = 0; y < newsItem.getTags().size(); y++) {
-                tag = (Tag) newsItem.getTags().elementAt(y);
-                for (int i = 0; i < tagsChoice.size(); i++) {
-                    if (tagsChoice.getString(i).equals(tag.getName())) {
-                        tagsChoice.setSelectedIndex(i, true);
+            //set tagged tags as selected on the Choice
+            if (newsItem.getTags().size() > 0) {
+                for (int y = 0; y < newsItem.getTags().size(); y++) {
+                    tag = (Tag) newsItem.getTags().elementAt(y);
+                    for (int i = 0; i < tagsChoice.size(); i++) {
+                        if (tagsChoice.getString(i).equals(tag.getName())) {
+                            tagsChoice.setSelectedIndex(i, true);
+                        }
                     }
                 }
             }
+        } catch (RecordStoreException ex) {
+            new WarningAlert("Error", "Was unable to retrieve tags.").show();
+        } catch (Throwable ex) {
+            new WarningAlert("Error", "Sorry, an error occurred.").show();
         }
-        
     }
 
     protected void save() {

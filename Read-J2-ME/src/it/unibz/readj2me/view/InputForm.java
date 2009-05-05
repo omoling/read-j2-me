@@ -37,7 +37,7 @@ public abstract class InputForm extends Form implements CommandListener {
         } else if (c == saveCommand) {
             if(isInputValid()){
                 save();
-                //TODO: if lists extend abstract class: call abstract refersh method
+                //if lists would extend abstract class: call abstract refersh method
                 ReadJ2ME.showOnDisplay(parent);
             }
             /* what to show to the user if the input is not valid should be
