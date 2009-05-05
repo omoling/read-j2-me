@@ -13,6 +13,7 @@ public class ErrorAlert extends Alert {
     
     public ErrorAlert(String title, String text) {
          super(title, text, null, AlertType.ERROR);
+         this.setTimeout(FOREVER);
     }
     
      public void show(){

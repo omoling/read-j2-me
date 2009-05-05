@@ -28,8 +28,9 @@ public class NewsItemList extends List implements CommandListener, Runnable {
     private Feed feed;
     private Vector items;
     private XmlReader xmlReader;
-    private Command backCommand,  openCommand,  updateCommand,
-            deleteItemCommand,  markUnreadCommand;
+    private Command backCommand, openCommand, updateCommand,
+            deleteItemCommand, markUnreadCommand, filterByTagCommand,
+            searchCommand;
 
     public NewsItemList(Feed feed, Displayable parent) {
         super(feed.getName(), List.IMPLICIT);
@@ -42,12 +43,16 @@ public class NewsItemList extends List implements CommandListener, Runnable {
         updateCommand = new Command("Update", Command.SCREEN, 1);
         markUnreadCommand = new Command("Mark unread", Command.SCREEN, 2);
         deleteItemCommand = new Command("Delete Item", Command.SCREEN, 3);
+        filterByTagCommand = new Command("Filter by Tag", Command.SCREEN, 4);
+        searchCommand = new Command("Search", Command.SCREEN, 5);
 
         this.addCommand(backCommand);
         this.addCommand(openCommand);
         this.addCommand(updateCommand);
         this.addCommand(markUnreadCommand);
         this.addCommand(deleteItemCommand);
+        this.addCommand(filterByTagCommand);
+        this.addCommand(searchCommand);
         this.setCommandListener(this);
 
         this.setFitPolicy(Choice.TEXT_WRAP_OFF);
@@ -124,6 +129,10 @@ public class NewsItemList extends List implements CommandListener, Runnable {
             Thread updateThread = new Thread(this);
             updateThread.start();
             return;
+        } else if (c == filterByTagCommand) {
+            //TODO
+        } else if (c == searchCommand) {
+            //TODO
         }
 
         int index = this.getSelectedIndex();
