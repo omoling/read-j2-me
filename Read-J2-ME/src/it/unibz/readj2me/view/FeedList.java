@@ -92,9 +92,9 @@ public class FeedList extends List implements CommandListener {
             ReadJ2ME.showOnDisplay(tagList);
             return;
         } else if (c == configCommand) {
-            throw new UnsupportedOperationException("not supported yet!");
-            //TODO
-            //return;
+            ConfigurationForm configForm = new ConfigurationForm(this);
+            ReadJ2ME.showOnDisplay(configForm);
+            return;
         }
 
         int index = this.getSelectedIndex();
