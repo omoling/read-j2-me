@@ -9,6 +9,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemCommandListener;
+import javax.microedition.lcdui.Spacer;
 import javax.microedition.lcdui.StringItem;
 
 /**
@@ -47,6 +48,9 @@ public class NewsItemForm extends Form implements CommandListener, ItemCommandLi
             titleItem.setLayout(Item.LAYOUT_LEFT);
             titleItem.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
             this.append(titleItem);
+
+            //TODO: better layout, maybe using Spacer??
+            this.append(new Spacer(1, 5));
         }
         if (newsItem.getTags() != null && newsItem.getTags().size() > 0) {
             StringBuffer sb = new StringBuffer("");

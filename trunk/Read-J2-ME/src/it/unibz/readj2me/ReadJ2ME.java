@@ -2,6 +2,8 @@ package it.unibz.readj2me;
 
 import it.unibz.readj2me.view.FeedList;
 import it.unibz.readj2me.view.WarningAlert;
+import it.unibz.readj2me.controller.PersistentManager;
+import it.unibz.readj2me.model.Configuration;
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
@@ -23,10 +25,13 @@ public class ReadJ2ME extends MIDlet {
             instance = this;
             this.display = Display.getDisplay(this);
 
-            //check Configuration
+            //load Configuration if any
+            byte[] config = PersistentManager.getInstance().loadConfiguration();
+            if(config != null) {
+                Configuration.getInstance().createFromBytes(config);
+            }
 
-            FeedList feedList = new FeedList("Read-J2-Me");
-            showOnDisplay(feedList);
+            showOnDisplay(new FeedList("Read-J2-Me"));
             initialized = true;
         }
     }
