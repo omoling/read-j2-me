@@ -1,8 +1,6 @@
 package it.unibz.readj2me.view;
 
-import it.unibz.readj2me.ReadJ2ME;
 import it.unibz.readj2me.controller.PersistentManager;
-import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.TextField;
@@ -16,7 +14,7 @@ public class FeedForm extends InputForm {
     private TextField feedNameField,  feedUrlField;
 
     public FeedForm(Displayable parent) {
-        super("Add a new feed", parent);
+        super("Add a new feed", parent, parent, "Save");
 
         feedNameField = new TextField("Name", "heise mobil atom", 30, TextField.ANY);
         feedNameField.setLayout(Item.LAYOUT_LEFT);
@@ -31,7 +29,7 @@ public class FeedForm extends InputForm {
     protected void save() {
         PersistentManager.getInstance().addFeed(getName(), getUrl());
         //TODO: should be put in abstract InputView
-        ((FeedList) parent).refreshList();
+        ((FeedList) parentDisplay).refreshList();
     }
 
     protected boolean isInputValid() {

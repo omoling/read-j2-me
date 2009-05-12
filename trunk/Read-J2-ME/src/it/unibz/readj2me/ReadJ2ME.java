@@ -22,6 +22,9 @@ public class ReadJ2ME extends MIDlet {
         if (!initialized) {
             instance = this;
             this.display = Display.getDisplay(this);
+
+            //check Configuration
+
             FeedList feedList = new FeedList("Read-J2-Me");
             showOnDisplay(feedList);
             initialized = true;
