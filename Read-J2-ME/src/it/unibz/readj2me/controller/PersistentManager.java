@@ -262,6 +262,22 @@ public class PersistentManager {
         }
     }
 
+    public byte[] loadConfiguration() {
+        try {
+            RecordStore rs = RecordStore.openRecordStore(Constants.CONFIG_RS_NAME, false);
+            RecordEnumeration re = rs.enumerateRecords(null, null, false);
+            byte[] rawRecord = null;
+            while (re.hasNextElement()) {
+                rawRecord = re.nextRecord();
+                break;
+            }
+            rs.closeRecordStore();
+            return rawRecord;
+        } catch (RecordStoreException ex) {
+            return null;
+        }
+    }
+
 
     // ****************
 

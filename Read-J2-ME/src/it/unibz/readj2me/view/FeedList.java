@@ -20,7 +20,7 @@ import javax.microedition.rms.RecordStoreException;
 public class FeedList extends List implements CommandListener {
 
     private Command exitCommand, openCommand, addFeedCommand, deleteFeedCommand;
-    private Command manageTagCommand;
+    private Command manageTagCommand, configCommand;
 
     //test commands
     private Command eraseRSCommand, listRSCommand, testCommand;
@@ -35,6 +35,7 @@ public class FeedList extends List implements CommandListener {
         addFeedCommand = new Command("Add new Feed", Command.SCREEN, 1);
         deleteFeedCommand = new Command("Delete Feed", Command.SCREEN, 2);
         manageTagCommand = new Command("Manage Tags", Command.SCREEN, 3);
+        configCommand = new Command("Configuration", Command.SCREEN, 4);
 
         //test commands
         eraseRSCommand = new Command("Erase RS", Command.SCREEN, 5);
@@ -46,6 +47,7 @@ public class FeedList extends List implements CommandListener {
         this.addCommand(addFeedCommand);
         this.addCommand(deleteFeedCommand);
         this.addCommand(manageTagCommand);
+        this.addCommand(configCommand);
 
         //test commands
         this.addCommand(eraseRSCommand);
@@ -89,6 +91,10 @@ public class FeedList extends List implements CommandListener {
             TagList tagList = new TagList("Tags", this);
             ReadJ2ME.showOnDisplay(tagList);
             return;
+        } else if (c == configCommand) {
+            throw new UnsupportedOperationException("not supported yet!");
+            //TODO
+            //return;
         }
 
         int index = this.getSelectedIndex();

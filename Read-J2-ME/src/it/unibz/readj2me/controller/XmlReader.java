@@ -22,48 +22,41 @@ public class XmlReader {
     private final static String TAG_LINK = "link";
     private final static String TAG_CONTENT = "content";
     private final static String TAG_SUMMARY = "summary";
-
     private Networking networking;
     private static XmlReader xmlReader = null;
 
-    private XmlReader(){
+    private XmlReader() {
         networking = new Networking();
     }
 
-    public static XmlReader getInstance(){
-        if (xmlReader == null){
+    public static XmlReader getInstance() {
+        if (xmlReader == null) {
             xmlReader = new XmlReader();
         }
         return xmlReader;
     }
 
-    public Vector getEntries(String feedUrl) throws IOException {
+    public Vector getEntries(String feedUrl) throws IOException, XmlPullParserException {
 
         Vector entries = new Vector();
         KXmlParser xmlParser = new KXmlParser();
         InputStream in = networking.getInputStream(feedUrl);
 
         if (in != null) {
-            try {
 
-                xmlParser.setInput(in, ENCODING);
-                int event;
-                while ((event = xmlParser.next()) != XmlPullParser.END_DOCUMENT) {
+            xmlParser.setInput(in, ENCODING);
+            int event;
+            while ((event = xmlParser.next()) != XmlPullParser.END_DOCUMENT) {
 
-                    if (event == XmlPullParser.START_TAG && xmlParser.getName().equals(TAG_ENTRY)) {
-                        NewsItem item;
-                        item = populateItem(xmlParser);
+                if (event == XmlPullParser.START_TAG && xmlParser.getName().equals(TAG_ENTRY)) {
+                    NewsItem item;
+                    item = populateItem(xmlParser);
 
-                        entries.addElement(item);
-                    }
-
+                    entries.addElement(item);
                 }
 
-            } catch (XmlPullParserException ex) {
-                ex.printStackTrace();
-            } catch (IOException ex) {
-                ex.printStackTrace();
             }
+
         }
 
         return entries;
@@ -93,12 +86,12 @@ public class XmlReader {
                 } else if (xmlParser.getName().equals(TAG_UPDATED)) {
                     String updated = xmlParser.nextText();
                     item.setUpdated(updated);
-                } else if(xmlParser.getName().equals(TAG_LINK)){
+                } else if (xmlParser.getName().equals(TAG_LINK)) {
                     item.setLink(xmlParser.getAttributeValue(null, "href"));
-                } else if(xmlParser.getName().equals(TAG_CONTENT)){
+                } else if (xmlParser.getName().equals(TAG_CONTENT)) {
                     String content = xmlParser.nextText();
                     item.setContent(content);
-                } else if(xmlParser.getName().equals(TAG_SUMMARY)){
+                } else if (xmlParser.getName().equals(TAG_SUMMARY)) {
                     String summary = xmlParser.nextText();
                     item.setSummary(summary);
                 }

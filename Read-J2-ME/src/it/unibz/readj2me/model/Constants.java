@@ -12,6 +12,7 @@ public class Constants {
     public static final String RS_PREFIX = "rj2me_";
     public static final String FEED_RS_NAME = RS_PREFIX + "feeds";
     public static final String TAGS_RS_NAME = RS_PREFIX + "tags";
+    public static final String CONFIG_RS_NAME = RS_PREFIX + "config";
 
     //IMAGES
     public static final String IMG_DEFAULT_FEED = "/feed.png";

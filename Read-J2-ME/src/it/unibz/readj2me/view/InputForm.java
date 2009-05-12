@@ -11,16 +11,17 @@ import javax.microedition.lcdui.Form;
  * @author Anton Dignoes, Omar Moling
  */
 public abstract class InputForm extends Form implements CommandListener {
-
-    protected Displayable parent;
+    protected Displayable parentDisplay;
+    private Displayable nextDisplay;
     protected Command backCommand, saveCommand;
 
-    public InputForm(String title, Displayable parent) {
+    public InputForm(String title, Displayable parent, Displayable nextDisplay, String okString) {
         super(title);
-        this.parent = parent;
+        this.parentDisplay = parent;
+        this.nextDisplay = nextDisplay;
 
         backCommand = new Command("Back", Command.BACK, 0);
-        saveCommand = new Command("Save", Command.SCREEN, 0);
+        saveCommand = new Command(okString, Command.SCREEN, 0);
 
         this.addCommand(backCommand);
         this.addCommand(saveCommand);
@@ -33,17 +34,24 @@ public abstract class InputForm extends Form implements CommandListener {
 
     public void commandAction(Command c, Displayable d) {
         if (c == backCommand) {
-            ReadJ2ME.showOnDisplay(parent);
+            ReadJ2ME.showOnDisplay(parentDisplay);
         } else if (c == saveCommand) {
             if(isInputValid()){
                 save();
                 //if lists would extend abstract class: call abstract refersh method
-                ReadJ2ME.showOnDisplay(parent);
+                ReadJ2ME.showOnDisplay(nextDisplay);
             }
             /* what to show to the user if the input is not valid should be
              * defined in the implementation's isInputValid()
              */
         }
+    }
+
+    /**
+     * @param nextDisplay the nextDisplay to set
+     */
+    public void setNextDisplay(Displayable nextDisplay) {
+        this.nextDisplay = nextDisplay;
     }
     
 }

@@ -17,7 +17,7 @@ public class TagForm extends InputForm {
     private TextField tagNameField;
 
     public TagForm(Displayable parent){
-        super("Add a new tag", parent);
+        super("Add a new tag", parent, parent, "Save");
 
         tagNameField = new TextField("Name", "Tech", 10, TextField.ANY);
         tagNameField.setLayout(Item.LAYOUT_LEFT);
@@ -28,10 +28,10 @@ public class TagForm extends InputForm {
     protected void save() {
         PersistentManager.getInstance().addTag(getName());
         //TODO: should be put in abstract InputView??
-        if(parent.getClass().equals(TagList.class)){
-            ((TagList)parent).refreshList();
-        } else if (parent.getClass().equals(TagChoiceForm.class)) {
-            ((TagChoiceForm)parent).refreshChoice();
+        if(parentDisplay.getClass().equals(TagList.class)){
+            ((TagList)parentDisplay).refreshList();
+        } else if (parentDisplay.getClass().equals(TagChoiceForm.class)) {
+            ((TagChoiceForm)parentDisplay).refreshChoice();
         }
     }
 

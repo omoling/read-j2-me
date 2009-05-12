@@ -29,7 +29,7 @@ public class TagChoiceForm extends InputForm implements CommandListener, ItemSta
     private boolean changed = false;
 
     public TagChoiceForm(NewsItem newsItem, String itemRsName, Displayable parent){
-        super("Available Tags", parent);
+        super("Available Tags", parent, parent, "Save");
         this.newsItem = newsItem;
         this.itemRsName = itemRsName;
         items = new Vector();
@@ -93,7 +93,7 @@ public class TagChoiceForm extends InputForm implements CommandListener, ItemSta
                 }
                 newsItem.setTags(newTags);
                 PersistentManager.getInstance().updateNewsItem(newsItem, itemRsName);
-                ((NewsItemForm) parent).populateView();
+                ((NewsItemForm) parentDisplay).populateView();
             }
         }
     }

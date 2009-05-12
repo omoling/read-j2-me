@@ -2,6 +2,7 @@ package it.unibz.readj2me.view;
 
 import it.unibz.readj2me.ReadJ2ME;
 import it.unibz.readj2me.controller.ImageLoader;
+import it.unibz.readj2me.controller.NewsItemSearchFilter;
 import it.unibz.readj2me.controller.NewsItemTagFilter;
 import it.unibz.readj2me.controller.PersistentManager;
 import it.unibz.readj2me.controller.XmlReader;
@@ -20,6 +21,7 @@ import javax.microedition.lcdui.Ticker;
 import javax.microedition.rms.RecordFilter;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
+import org.xmlpull.v1.XmlPullParserException;
 
 /**
  *
@@ -31,21 +33,17 @@ public class NewsItemList extends List implements CommandListener, Runnable {
     private Feed feed;
     private Vector items = new Vector();
     private XmlReader xmlReader;
-    private Command backCommand,  openCommand,  updateCommand,  deleteItemCommand,  markUnreadCommand,  filterByTagCommand,  searchCommand;
+    private Command backCommand, openCommand, updateCommand, deleteItemCommand,
+            markUnreadCommand, filterByTagCommand, searchCommand;
     private RecordFilter newsItemsFilter = null;
-    private boolean filtered = false;
+    private boolean filtered = false, changed = false;
 
     public NewsItemList(Feed feed, Displayable parent) {
         super(feed.getName(), List.IMPLICIT);
         filtered = false;
         this.parent = parent;
         this.feed = feed;
-
-        addCommands();
-        this.setCommandListener(this);
-
-        this.setFitPolicy(Choice.TEXT_WRAP_OFF);
-        updateList();
+        init();
     }
 
     public NewsItemList(Vector filterTags, String titlePrefix, Feed feed, Displayable parent) {
@@ -55,10 +53,22 @@ public class NewsItemList extends List implements CommandListener, Runnable {
         this.parent = parent;
 
         newsItemsFilter = new NewsItemTagFilter(filterTags);
+        init();
+    }
 
+    public NewsItemList(String searchString, Feed feed, Displayable parent) {
+        super("\"" + searchString + "\" in " + feed.getName(), List.IMPLICIT);
+        filtered = true;
+        this.feed = feed;
+        this.parent = parent;
+
+        newsItemsFilter = new NewsItemSearchFilter(searchString);
+        init();
+    }
+
+    private void init() {
         addCommands();
         this.setCommandListener(this);
-
         this.setFitPolicy(Choice.TEXT_WRAP_OFF);
         updateList();
     }
@@ -141,6 +151,11 @@ public class NewsItemList extends List implements CommandListener, Runnable {
             new ErrorAlert("Network", "Could not retrieve any data. Check the URL on its correctness.").show();
         } catch (RecordStoreFullException ex) {
                 new WarningAlert("Error", "The memory of the device is full!").show();
+        } catch (XmlPullParserException ex) {
+                new WarningAlert("Error", "Error in parsing data, XML format not supported!").show();
+                //TODO
+                System.out.println(ex.getMessage());
+                ex.printStackTrace();
         } catch (Exception ex) {
                 new WarningAlert("Error", "Sorry, an error occurred!").show();
         } finally {
@@ -155,7 +170,9 @@ public class NewsItemList extends List implements CommandListener, Runnable {
         if (c == backCommand) {
             if (filtered) {
                 //if filtered list, refresh parent list first (shall be a NewsItemList)
-                ((NewsItemList) parent).updateList();
+                if (changed && parent instanceof NewsItemList) {
+                    ((NewsItemList) parent).updateList();
+                }
             }
             ReadJ2ME.showOnDisplay(parent);
             return;
@@ -168,7 +185,8 @@ public class NewsItemList extends List implements CommandListener, Runnable {
             ReadJ2ME.showOnDisplay(filterForm);
             return;
         } else if (c == searchCommand) {
-            //TODO
+            NewsItemSearchForm searchForm = new NewsItemSearchForm(feed, this);
+            ReadJ2ME.showOnDisplay(searchForm);
             return;
         }
 
@@ -181,14 +199,15 @@ public class NewsItemList extends List implements CommandListener, Runnable {
                 PersistentManager.getInstance().updateNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
                 //update list and vector
                 this.set(index, selectedItem.getTitle(), ImageLoader.getImage(Constants.IMG_DEFAULT_FEED));
-            //had to be removed because of emulator bug on setFont
-            //this.setFont(index, Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
+                //had to be removed because of emulator bug on setFont
+                //this.setFont(index, Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
+                changed = true;
             } else if (c == deleteItemCommand) {
                 PersistentManager.getInstance().removeNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
                 //update list and vector
                 this.delete(index);
                 items.removeElementAt(index);
-
+                changed = true;
             } else if (c == openCommand || d == this) {
                 //show view
                 NewsItemForm itemView = new NewsItemForm(selectedItem, feed.getItemsRecordStoreName(), this);
@@ -200,6 +219,7 @@ public class NewsItemList extends List implements CommandListener, Runnable {
                     //had to be removed because of emulator bug on setFont
                     //this.setFont(index, Font.getDefaultFont());
                     this.set(index, selectedItem.getTitle(), ImageLoader.getImage(Constants.IMG_GREY_FEED));
+                    changed = true;
                 }
             }
 
