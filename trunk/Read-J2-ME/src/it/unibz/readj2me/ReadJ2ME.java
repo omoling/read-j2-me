@@ -25,14 +25,19 @@ public class ReadJ2ME extends MIDlet {
             instance = this;
             this.display = Display.getDisplay(this);
 
-            //load Configuration if any
-            byte[] config = PersistentManager.getInstance().loadConfiguration();
-            if(config != null) {
-                Configuration.getInstance().createFromBytes(config);
-            }
+            loadConfiguration();
 
             showOnDisplay(new FeedList("Read-J2-Me"));
             initialized = true;
+        }
+    }
+
+    private void loadConfiguration() {
+        //load Configuration if any
+        byte[] config = PersistentManager.getInstance().loadConfiguration();
+        if (config != null) {
+            Configuration configuration = Configuration.getInstance();
+            configuration.createFromBytes(config);
         }
     }
 

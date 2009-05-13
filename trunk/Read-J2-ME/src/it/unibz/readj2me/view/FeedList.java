@@ -23,7 +23,7 @@ public class FeedList extends List implements CommandListener {
     private Command manageTagCommand, configCommand;
 
     //test commands
-    private Command eraseRSCommand, listRSCommand, testCommand;
+    private Command eraseRSCommand, listRSCommand, testCommand, deleteConfigCommand;
     private Vector items;
 
     public FeedList(String title) {
@@ -41,6 +41,7 @@ public class FeedList extends List implements CommandListener {
         eraseRSCommand = new Command("Erase RS", Command.SCREEN, 5);
         listRSCommand = new Command("List RS", Command.SCREEN, 4);
         testCommand = new Command("Test", Command.SCREEN, 6);
+        deleteConfigCommand = new Command("Delete Config", Command.SCREEN, 7);
 
         this.addCommand(exitCommand);
         this.addCommand(openCommand);
@@ -53,6 +54,7 @@ public class FeedList extends List implements CommandListener {
         this.addCommand(eraseRSCommand);
         this.addCommand(listRSCommand);
         this.addCommand(testCommand);
+        this.addCommand(deleteConfigCommand);
 
         this.setCommandListener(this);
         refreshList();
@@ -122,6 +124,9 @@ public class FeedList extends List implements CommandListener {
             //TODO: to be removed after development
             PersistentManager.getInstance().addFeed("heise security", "http://www.heise.de/security/news/news-atom.xml");
             refreshList();
+        } else if (c == deleteConfigCommand) {
+            //TODO: to be removed after development
+            PersistentManager.getInstance().deleteConfig();
             
         } else if (c == openCommand || d == this) {
             if (index >= 0) {

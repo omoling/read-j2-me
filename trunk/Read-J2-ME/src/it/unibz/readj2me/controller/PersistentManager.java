@@ -1,5 +1,6 @@
 package it.unibz.readj2me.controller;
 
+import it.unibz.readj2me.model.Configuration;
 import it.unibz.readj2me.model.Constants;
 import it.unibz.readj2me.model.Feed;
 import it.unibz.readj2me.model.NewsItem;
@@ -204,7 +205,6 @@ public class PersistentManager {
         } catch (Throwable t) {
             new WarningAlert("adding feed", "3: " + t.toString()).show();
         }
-
     }
 
     public void removeNewsItem(NewsItem item, String rsName){
@@ -278,6 +278,21 @@ public class PersistentManager {
         }
     }
 
+    public void addConfiguration() throws RecordStoreFullException, RecordStoreException {
+        RecordStore rs = RecordStore.openRecordStore(Constants.CONFIG_RS_NAME, true);
+
+        //delete all records if any
+        RecordEnumeration re = rs.enumerateRecords(null, null, false);
+        while (re.hasNextElement()) {
+            rs.deleteRecord(re.nextRecordId());
+        }
+
+        //write new configuration
+        byte[] row = Configuration.getInstance().getBytes();
+        rs.addRecord(row, 0, row.length);
+        rs.closeRecordStore();
+    }
+
 
     // ****************
 
@@ -305,6 +320,17 @@ public class PersistentManager {
         for(int i = 0; i < stores.length; i++){
             System.out.println(stores[i]);
         }
+    }
+
+    //testing
+    public void deleteConfig() {
+        try {
+            RecordStore.deleteRecordStore(Constants.CONFIG_RS_NAME);
+        } catch (RecordStoreNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (RecordStoreException ex) {
+            ex.printStackTrace();
+        } 
     }
 
 }
