@@ -9,7 +9,7 @@ import it.unibz.readj2me.view.WarningAlert;
 public class Configuration implements IPersistable {
 
     private static Configuration instance = null;
-    private int maxNewsItems = 100;
+    private int maxNewsItems = 2;
 
     private Configuration() {
     }
@@ -50,7 +50,7 @@ public class Configuration implements IPersistable {
             index1 = recordString.indexOf(Constants.FIELD_SEPARATOR, 0);
             String tempMax = recordString.substring(0, index1);
             try {
-                maxNewsItems = Integer.parseInt(tempMax);
+                instance.setMaxNewsItems(maxNewsItems = Integer.parseInt(tempMax));
             } catch (Throwable t) {
                 //TODO: remove then..
                 new WarningAlert("parsing settings maxNewsItems", "parsing settings maxNewsITems").show();
