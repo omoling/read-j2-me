@@ -96,11 +96,11 @@ public class PersistentManager {
         return items;
     }
 
-    public Vector loadNewsItems(String rsName, RecordFilter filter) throws RecordStoreException {
+    public Vector loadNewsItems(String rsName, RecordFilter filter, boolean dateAscending) throws RecordStoreException {
         RecordStore rs = RecordStore.openRecordStore(rsName, false);
         Vector items = new Vector();
 
-        RecordEnumeration re = rs.enumerateRecords(filter, new NewsItemComparator(), false);
+        RecordEnumeration re = rs.enumerateRecords(filter, new NewsItemDateComparator(dateAscending), false);
         byte[] rawRecord;
         while(re.hasNextElement()) {
             rawRecord = re.nextRecord();
@@ -111,10 +111,6 @@ public class PersistentManager {
         return items;
     }
 
-    public Vector loadNewsItems(String rsName) throws RecordStoreException {
-        return loadNewsItems(rsName, null);
-    }
-
     public void addNewsItems(Feed feed, Vector items) throws RecordStoreFullException, Exception {
         RecordStore rs;
         rs = RecordStore.openRecordStore(feed.getItemsRecordStoreName(), true);
@@ -123,14 +119,12 @@ public class PersistentManager {
         NewsItem item;
         while (enumeration.hasMoreElements()) {
             item = (NewsItem) enumeration.nextElement();
-            if (!feed.getKnownIds().contains(item.getId())) {
-                int nextId = rs.getNextRecordID();
-                item.setRs_id(nextId);
-                byte[] row = item.getBytes();
-                rs.addRecord(row, 0, row.length);
-                feed.getKnownIds().addElement(item.getId());
-                feedChanged = true;
-            }
+            int nextId = rs.getNextRecordID();
+            item.setRs_id(nextId);
+            byte[] row = item.getBytes();
+            rs.addRecord(row, 0, row.length);
+            feed.getKnownIds().addElement(item.getId());
+            feedChanged = true;
         }
         rs.closeRecordStore();
         if (feedChanged) {

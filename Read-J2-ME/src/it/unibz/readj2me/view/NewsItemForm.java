@@ -23,6 +23,7 @@ public class NewsItemForm extends Form implements CommandListener, ItemCommandLi
     private Command backCommand, tagsCommand, openLinkCommand;
     private StringItem titleItem, tagsItem, contentItem, summaryItem, linkItem;
     private String itemRsName;
+    private boolean changed = false;
 
     public NewsItemForm(NewsItem newsItem, String itemRsName, Displayable parent) {
         super(newsItem.getTitle());
@@ -45,14 +46,11 @@ public class NewsItemForm extends Form implements CommandListener, ItemCommandLi
         
         if (newsItem.getTitle() != null && !newsItem.getTitle().equals("")){
             titleItem = new StringItem(null, newsItem.getTitle());
-            titleItem.setLayout(Item.LAYOUT_LEFT);
             titleItem.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
             this.append(titleItem);
-
-            //TODO: better layout, maybe using Spacer??
-            this.append(new Spacer(1, 5));
         }
         if (newsItem.getTags() != null && newsItem.getTags().size() > 0) {
+            this.append(new Spacer(1, 5));
             StringBuffer sb = new StringBuffer("");
             int size = newsItem.getTags().size();
             Tag tag;
@@ -64,26 +62,24 @@ public class NewsItemForm extends Form implements CommandListener, ItemCommandLi
                 }
             }
             tagsItem = new StringItem("Tags:", sb.toString());
-            tagsItem.setLayout(Item.LAYOUT_LEFT);
             tagsItem.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
-            tagsItem.setLayout(Item.LAYOUT_NEWLINE_AFTER);
             this.append(tagsItem);
         }
         if (newsItem.getContent() != null && !newsItem.getContent().equals("")) {
+            this.append(new Spacer(1, 5));
             contentItem = new StringItem(null, newsItem.getContent());
-            contentItem.setLayout(Item.LAYOUT_LEFT);
             contentItem.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
             this.append(contentItem);
         }
         if (newsItem.getSummary() != null && !newsItem.getSummary().equals("")) {
+            this.append(new Spacer(1, 5));
             summaryItem = new StringItem(null, newsItem.getSummary());
-            summaryItem.setLayout(Item.LAYOUT_LEFT);
             summaryItem.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
             this.append(summaryItem);
         }
         if (newsItem.getLink() != null && !newsItem.getLink().equals("")) {
+            this.append(new Spacer(1, 5));
             linkItem = new StringItem(null, "Link", Item.HYPERLINK);
-            //linkItem.setLayout(Item.LAYOUT_LEFT);
             linkItem.setLayout(Item.LAYOUT_NEWLINE_BEFORE);
             openLinkCommand = new Command("Browse", Command.OK, 0);
             linkItem.addCommand(openLinkCommand);
@@ -95,6 +91,10 @@ public class NewsItemForm extends Form implements CommandListener, ItemCommandLi
 
     public void commandAction(Command c, Displayable d) {
         if (c == backCommand) {
+            if(changed) {
+                //TODO: not possible to update single list-entry?
+                ((NewsItemList) parent).updateList();
+            }
             ReadJ2ME.showOnDisplay(parent);
         } else if (c == tagsCommand) {
             TagChoiceForm tagChoiceForm = new TagChoiceForm(newsItem, itemRsName, this);
@@ -106,6 +106,13 @@ public class NewsItemForm extends Form implements CommandListener, ItemCommandLi
         if (item == linkItem && c == openLinkCommand){
             ReadJ2ME.platReq(newsItem.getLink());
         }
+    }
+
+    /**
+     * @param changed the changed to set
+     */
+    public void setChanged(boolean changed) {
+        this.changed = changed;
     }
     
 }
