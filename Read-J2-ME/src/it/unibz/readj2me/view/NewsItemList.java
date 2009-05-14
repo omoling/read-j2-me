@@ -36,9 +36,12 @@ public class NewsItemList extends List implements CommandListener, Runnable {
     private Vector items = new Vector();
     private XmlReader xmlReader;
     private Command backCommand, openCommand, updateCommand, deleteItemCommand,
-            markUnreadCommand, filterByTagCommand, searchCommand;
+            markUnreadCommand, filterByTagCommand, searchCommand,
+            sortByDateCommand, sortByTitleAscCommand, sortByTitleDescCommand;
     private RecordFilter newsItemsFilter = null;
     private boolean filtered = false, changed = false;
+    private int sortByDate = 1, sortByTitleAsc = 2, sortByTitleDesc = 3;
+    private int sortType = 1;
 
     public NewsItemList(Feed feed, Displayable parent) {
         super(feed.getName(), List.IMPLICIT);
@@ -84,6 +87,18 @@ public class NewsItemList extends List implements CommandListener, Runnable {
         this.addCommand(markUnreadCommand);
         deleteItemCommand = new Command("Delete Item", Command.SCREEN, 3);
         this.addCommand(deleteItemCommand);
+        sortByDateCommand = new Command("Sort by date", Command.SCREEN, 6);
+        sortByTitleAscCommand = new Command("Sort: title ASC", Command.SCREEN, 7);
+        sortByTitleDescCommand = new Command("Sort: title DESC", Command.SCREEN, 8);
+        if (sortType == sortByTitleAsc) {
+            this.addCommand(sortByDateCommand);
+            this.addCommand(sortByTitleDescCommand);
+        } else if (sortType == sortByTitleDesc) {
+            this.addCommand(sortByDateCommand);
+            this.addCommand(sortByTitleAscCommand);
+        } else /* if (sortType == sortByDate) */ {
+            this.addCommand(sortByTitleAscCommand);
+        }
 
         if (!filtered) {
             updateCommand = new Command("Update", Command.SCREEN, 1);
@@ -101,8 +116,13 @@ public class NewsItemList extends List implements CommandListener, Runnable {
         this.deleteAll();
 
         try {
-            //TODO: handle d*** exceptions
-            items = PersistentManager.getInstance().loadNewsItems(getFeed().getItemsRecordStoreName(), newsItemsFilter, false);
+            if (sortType == sortByTitleAsc) {
+                items = PersistentManager.getInstance().loadNewsItemsByTitle(getFeed().getItemsRecordStoreName(), newsItemsFilter, true);
+            } else if (sortType == sortByTitleDesc) {
+                items = PersistentManager.getInstance().loadNewsItemsByTitle(getFeed().getItemsRecordStoreName(), newsItemsFilter, false);
+            } else /* if (sortType == sortByDate) */ {
+                items = PersistentManager.getInstance().loadNewsItemsByDate(getFeed().getItemsRecordStoreName(), newsItemsFilter, false);
+            }
 
             NewsItem item;
             items.trimToSize();
@@ -169,7 +189,7 @@ public class NewsItemList extends List implements CommandListener, Runnable {
                 
                 //if limit > 0 delete old items if there are more than limit
                 if(Configuration.getInstance().getMaxNewsItems() > 0) {
-                    Vector currentItems = PersistentManager.getInstance().loadNewsItems(feed.getItemsRecordStoreName(), null, true);
+                    Vector currentItems = PersistentManager.getInstance().loadNewsItemsByDate(feed.getItemsRecordStoreName(), null, true);
                     int toBeDeleted = currentItems.size() - (Configuration.getInstance().getMaxNewsItems() * 10);
                     if (toBeDeleted > 0) {
                         Enumeration e = currentItems.elements();
@@ -195,14 +215,14 @@ public class NewsItemList extends List implements CommandListener, Runnable {
         } catch (IOException ex) {
             new ErrorAlert("Network", "Could not retrieve any data. Check the URL on its correctness.").show();
         } catch (RecordStoreFullException ex) {
-                new WarningAlert("Error", "The memory of the device is full!").show();
+                new ErrorAlert("Memory", "Memory is full!").show();
         } catch (XmlPullParserException ex) {
-                new WarningAlert("Error", "Error in parsing data, XML format not supported!").show();
+                new ErrorAlert("Error", "Error in parsing data, XML format not supported!").show();
                 //TODO
                 System.out.println(ex.getMessage());
                 ex.printStackTrace();
         } catch (Exception ex) {
-                new WarningAlert("Error", "Sorry, an error occurred!").show();
+                new ErrorAlert("Error", "Sorry, an error occurred!").show();
         } finally {
             xmlReader = null;
             this.setTicker(null);
@@ -233,6 +253,27 @@ public class NewsItemList extends List implements CommandListener, Runnable {
             NewsItemSearchForm searchForm = new NewsItemSearchForm(feed, this);
             ReadJ2ME.showOnDisplay(searchForm);
             return;
+        } else if (c == sortByDateCommand) {
+            sortType = sortByDate;
+            this.removeCommand(sortByDateCommand);
+            this.removeCommand(sortByTitleDescCommand);
+            this.addCommand(sortByTitleAscCommand);
+            updateList();
+            return;
+        } else if (c == sortByTitleAscCommand) {
+            sortType = sortByTitleAsc;
+            this.removeCommand(sortByTitleAscCommand);
+            this.addCommand(sortByDateCommand);
+            this.addCommand(sortByTitleDescCommand);
+            updateList();
+            return;
+        } else if (c == sortByTitleDescCommand) {
+            sortType = sortByTitleDesc;
+            this.removeCommand(sortByTitleDescCommand);
+            this.addCommand(sortByDateCommand);
+            this.addCommand(sortByTitleAscCommand);
+            updateList();
+            return;
         }
 
         int index = this.getSelectedIndex();
@@ -240,13 +281,19 @@ public class NewsItemList extends List implements CommandListener, Runnable {
             NewsItem selectedItem = (NewsItem) items.elementAt(index);
 
             if (c == markUnreadCommand) {
-                selectedItem.setRead(false);
-                PersistentManager.getInstance().updateNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
-                //update list and vector
-                this.set(index, selectedItem.getTitle(), getNewsItemIcon(selectedItem));
-                //had to be removed because of emulator bug on setFont
-                //this.setFont(index, Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
-                changed = true;
+                try {
+                    selectedItem.setRead(false);
+                    PersistentManager.getInstance().updateNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
+                    //update list and vector
+                    this.set(index, selectedItem.getTitle(), getNewsItemIcon(selectedItem));
+                    //had to be removed because of emulator bug on setFont
+                    //this.setFont(index, Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
+                    changed = true;
+                } catch (RecordStoreFullException ex) {
+                    new ErrorAlert("Memory", "Memory full!").show();
+                } catch (RecordStoreException ex) {
+                    new ErrorAlert("Memory", "Sorry, memory error!").show();
+                }
             } else if (c == deleteItemCommand) {
                 PersistentManager.getInstance().removeNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
                 //update list and vector
@@ -259,12 +306,18 @@ public class NewsItemList extends List implements CommandListener, Runnable {
                 ReadJ2ME.showOnDisplay(itemView);
                 //update item's read-status
                 if (!selectedItem.isRead()) {
-                    selectedItem.setRead(true);
-                    PersistentManager.getInstance().updateNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
-                    //had to be removed because of emulator bug on setFont
-                    //this.setFont(index, Font.getDefaultFont());
-                    this.set(index, selectedItem.getTitle(), getNewsItemIcon(selectedItem));
-                    changed = true;
+                    try {
+                        selectedItem.setRead(true);
+                        PersistentManager.getInstance().updateNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
+                        //had to be removed because of emulator bug on setFont
+                        //this.setFont(index, Font.getDefaultFont());
+                        this.set(index, selectedItem.getTitle(), getNewsItemIcon(selectedItem));
+                        changed = true;
+                    } catch (RecordStoreFullException ex) {
+                        new ErrorAlert("Memory", "Memory full!").show();
+                    } catch (RecordStoreException ex) {
+                        new ErrorAlert("Memory", "Sorry, memory error!").show();
+                    }
                 }
             }
 

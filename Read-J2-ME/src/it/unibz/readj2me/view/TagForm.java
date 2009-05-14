@@ -7,6 +7,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.rms.RecordStoreException;
+import javax.microedition.rms.RecordStoreFullException;
 
 /**
  *
@@ -26,12 +27,18 @@ public class TagForm extends InputForm {
     }
 
     protected void save() {
-        PersistentManager.getInstance().addTag(getName());
-        //TODO: should be put in abstract InputView??
-        if(parentDisplay.getClass().equals(TagList.class)){
-            ((TagList)parentDisplay).refreshList();
-        } else if (parentDisplay.getClass().equals(TagChoiceForm.class)) {
-            ((TagChoiceForm)parentDisplay).refreshChoice();
+        try {
+            PersistentManager.getInstance().addTag(getName());
+            //TODO: should be put in abstract InputView??
+            if (parentDisplay.getClass().equals(TagList.class)) {
+                ((TagList) parentDisplay).refreshList();
+            } else if (parentDisplay.getClass().equals(TagChoiceForm.class)) {
+                ((TagChoiceForm) parentDisplay).refreshChoice();
+            }
+        } catch (RecordStoreFullException ex) {
+            new ErrorAlert("Memory", "Memory full!").show();
+        } catch (RecordStoreException ex) {
+            new ErrorAlert("Memory", "Sorry, memory error!").show();
         }
     }
 

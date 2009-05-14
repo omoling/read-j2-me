@@ -14,6 +14,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.ItemStateListener;
 import javax.microedition.rms.RecordStoreException;
+import javax.microedition.rms.RecordStoreFullException;
 
 /**
  *
@@ -92,9 +93,15 @@ public class TagChoiceForm extends InputForm implements CommandListener, ItemSta
                     }
                 }
                 newsItem.setTags(newTags);
-                PersistentManager.getInstance().updateNewsItem(newsItem, itemRsName);
-                ((NewsItemForm) parentDisplay).setChanged(true);
-                ((NewsItemForm) parentDisplay).populateView();
+                try {
+                    PersistentManager.getInstance().updateNewsItem(newsItem, itemRsName);
+                    ((NewsItemForm) parentDisplay).setChanged(true);
+                    ((NewsItemForm) parentDisplay).populateView();
+                } catch (RecordStoreFullException ex) {
+                    new ErrorAlert("Memory", "Memory full!").show();
+                } catch (RecordStoreException ex) {
+                    new ErrorAlert("Memory", "Sorry, memory error!").show();
+                }
             }
         }
     }
