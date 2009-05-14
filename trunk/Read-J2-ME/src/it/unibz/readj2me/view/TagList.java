@@ -86,7 +86,7 @@ public class TagList extends List implements CommandListener {
                     NewsItem currentNewsItem;
                     while (enumFeeds.hasMoreElements()) {
                         currentFeed = (Feed) enumFeeds.nextElement();
-                        newsItems = pm.loadNewsItems(currentFeed.getItemsRecordStoreName(),
+                        newsItems = pm.loadNewsItemsByDate(currentFeed.getItemsRecordStoreName(),
                                 new NewsItemTagFilter(selectedTag), false);
                         enumNewsItems = newsItems.elements();
                         while (enumNewsItems.hasMoreElements()) {

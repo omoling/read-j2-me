@@ -9,6 +9,7 @@ import it.unibz.readj2me.view.WarningAlert;
 import java.util.Enumeration;
 import java.util.Random;
 import java.util.Vector;
+import javax.microedition.rms.RecordComparator;
 import javax.microedition.rms.RecordEnumeration;
 import javax.microedition.rms.RecordFilter;
 import javax.microedition.rms.RecordStore;
@@ -96,11 +97,19 @@ public class PersistentManager {
         return items;
     }
 
-    public Vector loadNewsItems(String rsName, RecordFilter filter, boolean dateAscending) throws RecordStoreException {
+    public Vector loadNewsItemsByTitle(String rsName, RecordFilter filter, boolean titleAscendling) throws RecordStoreException {
+        return loadNewsItems(rsName, filter, new NewsItemTitleComparator(titleAscendling));
+    }
+
+    public Vector loadNewsItemsByDate(String rsName, RecordFilter filter, boolean dateAscending) throws RecordStoreException {
+        return loadNewsItems(rsName, filter, new NewsItemDateComparator(dateAscending));
+    }
+
+    private Vector loadNewsItems(String rsName, RecordFilter filter, RecordComparator comparator) throws RecordStoreException {
         RecordStore rs = RecordStore.openRecordStore(rsName, false);
         Vector items = new Vector();
 
-        RecordEnumeration re = rs.enumerateRecords(filter, new NewsItemDateComparator(dateAscending), false);
+        RecordEnumeration re = rs.enumerateRecords(filter, comparator, false);
         byte[] rawRecord;
         while(re.hasNextElement()) {
             rawRecord = re.nextRecord();
@@ -132,53 +141,24 @@ public class PersistentManager {
         }
     }
 
-    public void updateNewsItem(NewsItem item, String rsName){
-        try {
-            RecordStore rs = RecordStore.openRecordStore(rsName, false);
-            byte[] row = item.getBytes();
-            rs.setRecord(item.getRs_id(), row, 0, row.length);
-        } catch (RecordStoreFullException ex) {
-            ex.printStackTrace();
-        } catch (RecordStoreNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (RecordStoreException ex) {
-            ex.printStackTrace();
-        } 
+    public void updateNewsItem(NewsItem item, String rsName) throws RecordStoreFullException, RecordStoreException {
+        RecordStore rs = RecordStore.openRecordStore(rsName, false);
+        byte[] row = item.getBytes();
+        rs.setRecord(item.getRs_id(), row, 0, row.length);
     }
 
-    public void updateFeed(Feed feed){
-        //update feed on RS (delete and rewrite it)
-        //removeFeed(feed, false);
-        //addFeed(feed);
-        try {
-            RecordStore rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, false);
-            byte[] row = feed.getBytes();
-            rs.setRecord(feed.getRs_id(), row, 0, row.length);
-        } catch (RecordStoreFullException ex) {
-            ex.printStackTrace();
-        } catch (RecordStoreNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (RecordStoreException ex) {
-            ex.printStackTrace();
-        }
+    public void updateFeed(Feed feed) throws RecordStoreFullException, RecordStoreException {
+        RecordStore rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, false);
+        byte[] row = feed.getBytes();
+        rs.setRecord(feed.getRs_id(), row, 0, row.length);
     }
 
-    public void addTag(String name) {
-        try {
-            RecordStore rs = RecordStore.openRecordStore(Constants.TAGS_RS_NAME, true);
-            Tag newTag = new Tag(name, rs.getNextRecordID());
-            byte[] row = newTag.getBytes();
-            rs.addRecord(row, 0, row.length);
-            rs.closeRecordStore();
-        } catch (RecordStoreFullException ex) {
-            ex.printStackTrace();
-            new WarningAlert("adding tag", "1: " + ex.toString()).show();
-        } catch (RecordStoreException ex) {
-            ex.printStackTrace();
-            new WarningAlert("adding tag", "2: " + ex.toString()).show();
-        } catch (Throwable t) {
-            new WarningAlert("adding tag", "3: " + t.toString()).show();
-        }
+    public void addTag(String name) throws RecordStoreFullException, RecordStoreException {
+        RecordStore rs = RecordStore.openRecordStore(Constants.TAGS_RS_NAME, true);
+        Tag newTag = new Tag(name, rs.getNextRecordID());
+        byte[] row = newTag.getBytes();
+        rs.addRecord(row, 0, row.length);
+        rs.closeRecordStore();
     }
 
     public void addFeed(String name, String url) {
