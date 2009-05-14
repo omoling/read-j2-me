@@ -93,6 +93,7 @@ public class TagChoiceForm extends InputForm implements CommandListener, ItemSta
                 }
                 newsItem.setTags(newTags);
                 PersistentManager.getInstance().updateNewsItem(newsItem, itemRsName);
+                ((NewsItemForm) parentDisplay).setChanged(true);
                 ((NewsItemForm) parentDisplay).populateView();
             }
         }

@@ -6,6 +6,7 @@ import it.unibz.readj2me.controller.NewsItemSearchFilter;
 import it.unibz.readj2me.controller.NewsItemTagFilter;
 import it.unibz.readj2me.controller.PersistentManager;
 import it.unibz.readj2me.controller.XmlReader;
+import it.unibz.readj2me.model.Configuration;
 import it.unibz.readj2me.model.Constants;
 import it.unibz.readj2me.model.Feed;
 import it.unibz.readj2me.model.NewsItem;
@@ -16,6 +17,7 @@ import javax.microedition.lcdui.Choice;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
+import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.List;
 import javax.microedition.lcdui.Ticker;
 import javax.microedition.rms.RecordFilter;
@@ -93,14 +95,14 @@ public class NewsItemList extends List implements CommandListener, Runnable {
         }
     }
 
-    private void updateList() {
+    protected void updateList() {
         //empty list and vector
         items.removeAllElements();
         this.deleteAll();
 
         try {
             //TODO: handle d*** exceptions
-            items = PersistentManager.getInstance().loadNewsItems(getFeed().getItemsRecordStoreName(), newsItemsFilter);
+            items = PersistentManager.getInstance().loadNewsItems(getFeed().getItemsRecordStoreName(), newsItemsFilter, false);
 
             NewsItem item;
             items.trimToSize();
@@ -108,11 +110,7 @@ public class NewsItemList extends List implements CommandListener, Runnable {
 
             while (enumeration.hasMoreElements()) {
                 item = (NewsItem) enumeration.nextElement();
-                if (item.isRead()) {
-                    this.append(item.getTitle(), ImageLoader.getImage(Constants.IMG_GREY_FEED));
-                } else {
-                    this.append(item.getTitle(), ImageLoader.getImage(Constants.IMG_DEFAULT_FEED));
-                }
+                this.append(item.getTitle(), getNewsItemIcon(item));
             }
 
             //set bold-font if unread
@@ -140,13 +138,60 @@ public class NewsItemList extends List implements CommandListener, Runnable {
         this.setTicker(updateTicker);
         xmlReader = XmlReader.getInstance();
         Vector newItems;
+        boolean[] knownIndexes;
         try {
             newItems = xmlReader.getEntries(getFeed().getUrl());
-            PersistentManager.getInstance().addNewsItems(getFeed(), newItems);
-            updateList();
-            
-            //TODO: remove from feed's IDs-vector those IDs that are not present in the feed anymore
+            newItems.trimToSize();
 
+            if (newItems != null && newItems.size() > 0) {
+
+                //remove already known items
+                knownIndexes = new boolean[newItems.size()];
+                NewsItem item;
+                for(int i = 0; i < newItems.size(); i++) {
+                    item = (NewsItem) newItems.elementAt(i);
+                    if (feed.getKnownIds().contains(item.getId())) {
+                        knownIndexes[i] = true;
+                    } else {
+                        knownIndexes[i] = false;
+                    }
+                }
+                for(int i = knownIndexes.length - 1; i >= 0; i--) {
+                    if (knownIndexes[i]) {
+                        newItems.removeElementAt(i);
+                    }
+                }
+                knownIndexes = null;
+
+                //add new items
+                PersistentManager.getInstance().addNewsItems(getFeed(), newItems);
+                newItems = null;
+                
+                //if limit > 0 delete old items if there are more than limit
+                if(Configuration.getInstance().getMaxNewsItems() > 0) {
+                    Vector currentItems = PersistentManager.getInstance().loadNewsItems(feed.getItemsRecordStoreName(), null, true);
+                    int toBeDeleted = currentItems.size() - (Configuration.getInstance().getMaxNewsItems() * 10);
+                    if (toBeDeleted > 0) {
+                        Enumeration e = currentItems.elements();
+                        for (int i = 0; i < toBeDeleted; i++) {
+                            if (e.hasMoreElements()) {
+                                item = (NewsItem) e.nextElement();
+                                if (item.getTags().size() == 0) {
+                                    PersistentManager.getInstance().removeNewsItem(item, feed.getItemsRecordStoreName());
+                                } else {
+                                    //avoid deleting this news by decrementing i
+                                    i--;
+                                }
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                updateList();
+            }
+            
         } catch (IOException ex) {
             new ErrorAlert("Network", "Could not retrieve any data. Check the URL on its correctness.").show();
         } catch (RecordStoreFullException ex) {
@@ -198,7 +243,7 @@ public class NewsItemList extends List implements CommandListener, Runnable {
                 selectedItem.setRead(false);
                 PersistentManager.getInstance().updateNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
                 //update list and vector
-                this.set(index, selectedItem.getTitle(), ImageLoader.getImage(Constants.IMG_DEFAULT_FEED));
+                this.set(index, selectedItem.getTitle(), getNewsItemIcon(selectedItem));
                 //had to be removed because of emulator bug on setFont
                 //this.setFont(index, Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
                 changed = true;
@@ -218,7 +263,7 @@ public class NewsItemList extends List implements CommandListener, Runnable {
                     PersistentManager.getInstance().updateNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
                     //had to be removed because of emulator bug on setFont
                     //this.setFont(index, Font.getDefaultFont());
-                    this.set(index, selectedItem.getTitle(), ImageLoader.getImage(Constants.IMG_GREY_FEED));
+                    this.set(index, selectedItem.getTitle(), getNewsItemIcon(selectedItem));
                     changed = true;
                 }
             }
@@ -228,6 +273,22 @@ public class NewsItemList extends List implements CommandListener, Runnable {
                 new WarningAlert("Info", "No news matching!").show();
             } else {
                 new WarningAlert("Info", "No news! Perform an update..").show();
+            }
+        }
+    }
+
+    private Image getNewsItemIcon(NewsItem newsItem) {
+        if (newsItem.getTags().size() > 0) {
+            if (newsItem.isRead()) {
+                return ImageLoader.getImage(Constants.IMG_GREY_FEED_L);
+            } else {
+                return ImageLoader.getImage(Constants.IMG_DEFAULT_FEED_L);
+            }
+        } else {
+            if (newsItem.isRead()) {
+                return ImageLoader.getImage(Constants.IMG_GREY_FEED);
+            } else {
+                return ImageLoader.getImage(Constants.IMG_DEFAULT_FEED);
             }
         }
     }

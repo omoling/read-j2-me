@@ -7,7 +7,13 @@ import javax.microedition.rms.RecordComparator;
  *
  * @author Anton Dignoes, Omar Moling
  */
-public class NewsItemComparator implements RecordComparator {
+public class NewsItemDateComparator implements RecordComparator {
+
+    private boolean ascending;
+
+    public NewsItemDateComparator(boolean ascending) {
+        this.ascending = ascending;
+    }
 
     public int compare(byte[] rec1, byte[] rec2) {
         NewsItem n1 = new NewsItem(rec1);
@@ -20,7 +26,15 @@ public class NewsItemComparator implements RecordComparator {
         n1 = null;
         n2 = null;
 
-        if (date1 != null && date2 != null) {
+        if (ascending) {
+            if (date1.compareTo(date2) > 0) {
+                return RecordComparator.FOLLOWS;
+            } else if (date1.compareTo(date2) < 0) {
+                return RecordComparator.PRECEDES;
+            } else {
+                return RecordComparator.EQUIVALENT;
+            }
+        } else {
             if (date1.compareTo(date2) > 0) {
                 return RecordComparator.PRECEDES;
             } else if (date1.compareTo(date2) < 0) {
@@ -28,12 +42,6 @@ public class NewsItemComparator implements RecordComparator {
             } else {
                 return RecordComparator.EQUIVALENT;
             }
-        } else if (date1 == null) {
-            return RecordComparator.FOLLOWS;
-        } else if (date2 == null) {
-            return RecordComparator.PRECEDES;
-        } else {
-            return RecordComparator.EQUIVALENT;
         }
     }
 }

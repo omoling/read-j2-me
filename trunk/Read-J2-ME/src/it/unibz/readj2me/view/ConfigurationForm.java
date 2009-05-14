@@ -17,7 +17,7 @@ import javax.microedition.rms.RecordStoreFullException;
 
 /**
  *
- * @author omoling
+ * @author Anton Dignoes, Omar Moling
  */
 public class ConfigurationForm extends InputForm implements ItemStateListener {
 
@@ -30,7 +30,7 @@ public class ConfigurationForm extends InputForm implements ItemStateListener {
         super("Configuration", parentDisplay, parentDisplay, "Save");
         originalMaxNewsValue = Configuration.getInstance().getMaxNewsItems();
         
-        maxNewsGauge = new Gauge("Max items: (x10)", true, 20, originalMaxNewsValue);
+        maxNewsGauge = new Gauge("Max items:", true, 20, originalMaxNewsValue);
         this.append(maxNewsGauge);
 
         maxNewsGaugeItem = new StringItem("Value:", "" + maxNewsGauge.getValue() * 10);
