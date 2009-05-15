@@ -74,24 +74,25 @@ public class XmlReader {
             }
 
             if (event == XmlPullParser.START_TAG) {
-                if (xmlParser.getName().equals(TAG_ID)) {
+                String name = xmlParser.getName();
+                if (name.equals(TAG_ID)) {
                     String id = xmlParser.nextText();
                     item.setId(id);
-                } else if (xmlParser.getName().equals(TAG_TITLE)) {
+                } else if (name.equals(TAG_TITLE)) {
                     String title = xmlParser.nextText();
                     item.setTitle(title);
-                } else if (xmlParser.getName().equals(TAG_PUBLISHED)) {
+                } else if (name.equals(TAG_PUBLISHED)) {
                     String published = xmlParser.nextText();
                     item.setPublished(published);
-                } else if (xmlParser.getName().equals(TAG_UPDATED)) {
+                } else if (name.equals(TAG_UPDATED)) {
                     String updated = xmlParser.nextText();
                     item.setUpdated(updated);
-                } else if (xmlParser.getName().equals(TAG_LINK)) {
+                } else if (name.equals(TAG_LINK)) {
                     item.setLink(xmlParser.getAttributeValue(null, "href"));
-                } else if (xmlParser.getName().equals(TAG_CONTENT)) {
+                } else if (name.equals(TAG_CONTENT)) {
                     String content = xmlParser.nextText();
                     item.setContent(content);
-                } else if (xmlParser.getName().equals(TAG_SUMMARY)) {
+                } else if (name.equals(TAG_SUMMARY)) {
                     String summary = xmlParser.nextText();
                     item.setSummary(summary);
                 }

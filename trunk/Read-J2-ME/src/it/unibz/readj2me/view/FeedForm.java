@@ -4,6 +4,8 @@ import it.unibz.readj2me.controller.PersistentManager;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.TextField;
+import javax.microedition.rms.RecordStoreException;
+import javax.microedition.rms.RecordStoreFullException;
 
 /**
  *
@@ -27,9 +29,15 @@ public class FeedForm extends InputForm {
     }
 
     protected void save() {
-        PersistentManager.getInstance().addFeed(getName(), getUrl());
-        //TODO: should be put in abstract InputView
-        ((FeedList) parentDisplay).refreshList();
+        try {
+            PersistentManager.getInstance().addFeed(getName(), getUrl());
+            //could be put in abstract InputView
+            ((FeedList) parentDisplay).refreshList();
+        } catch (RecordStoreFullException ex) {
+            new ErrorAlert("Memory", "Memory full!").show();
+        } catch (RecordStoreException ex) {
+            new ErrorAlert("Memory", "Sorry, memory error!").show();
+        }
     }
 
     protected boolean isInputValid() {

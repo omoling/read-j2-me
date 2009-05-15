@@ -15,6 +15,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 import javax.microedition.rms.RecordStoreException;
+import javax.microedition.rms.RecordStoreFullException;
 
 /**
  *
@@ -78,7 +79,6 @@ public class TagList extends List implements CommandListener {
                     Tag selectedTag = (Tag) getItems().elementAt(index);
                     PersistentManager pm = PersistentManager.getInstance();
 
-                    //TODO: may be refactored
                     //remove tag from ALL newsitems
                     Vector newsItems, tags, feeds = pm.loadFeeds();
                     Enumeration enumNewsItems, enumFeeds = feeds.elements();
@@ -110,11 +110,10 @@ public class TagList extends List implements CommandListener {
                     getItems().removeElementAt(index);
                     this.delete(index);
 
-                //TODO!!
+                } catch (RecordStoreFullException ex) {
+                    new ErrorAlert("Memory", "Memory full!").show();
                 } catch (RecordStoreException ex) {
-                    ex.printStackTrace();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                    new ErrorAlert("Memory", "Sorry, memory error!").show();
                 }
             }
         }

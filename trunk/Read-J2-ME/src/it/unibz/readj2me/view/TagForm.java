@@ -29,7 +29,7 @@ public class TagForm extends InputForm {
     protected void save() {
         try {
             PersistentManager.getInstance().addTag(getName());
-            //TODO: should be put in abstract InputView??
+            //could be put in abstract InputView..
             if (parentDisplay.getClass().equals(TagList.class)) {
                 ((TagList) parentDisplay).refreshList();
             } else if (parentDisplay.getClass().equals(TagChoiceForm.class)) {
@@ -54,11 +54,10 @@ public class TagForm extends InputForm {
                     tagIsFree = false;
                 }
             }
-            //TODO: review after RecordStore exceptions are handles in one way!!
+        } catch (RecordStoreFullException ex) {
+            new ErrorAlert("Memory", "Memory full!").show();
         } catch (RecordStoreException ex) {
-            ex.printStackTrace();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            new ErrorAlert("Memory", "Sorry, memory error!").show();
         }
 
         if (getName() != null && !getName().equals("") && tagIsFree) {

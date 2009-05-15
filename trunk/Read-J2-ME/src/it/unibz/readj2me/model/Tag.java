@@ -40,14 +40,10 @@ public class Tag implements IPersistable {
             try {
                 rs_id = Integer.parseInt(tempRs_Id);
             } catch (Throwable t) {
-                //TODO: remove then..
-                new WarningAlert("parsing tag id", "parsing tag id").show();
-                t.printStackTrace();
+                //nothing
             }
         } catch (Throwable t) {
-            //TODO:
-            //throw new Exception("Parsing error in RecordStore");
-            t.printStackTrace();
+            //Future: could delete record since not valid
         }
     }
 
