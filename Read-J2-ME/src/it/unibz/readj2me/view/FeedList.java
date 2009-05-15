@@ -12,6 +12,7 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
 import javax.microedition.rms.RecordStoreException;
+import javax.microedition.rms.RecordStoreFullException;
 
 /**
  *
@@ -19,11 +20,11 @@ import javax.microedition.rms.RecordStoreException;
  */
 public class FeedList extends List implements CommandListener {
 
-    private Command exitCommand, openCommand, addFeedCommand, deleteFeedCommand;
-    private Command manageTagCommand, configCommand;
+    private Command exitCommand,  openCommand,  addFeedCommand,  deleteFeedCommand;
+    private Command manageTagCommand,  configCommand;
 
     //test commands
-    private Command eraseRSCommand, listRSCommand, testCommand, deleteConfigCommand;
+    private Command eraseRSCommand,  listRSCommand,  testCommand,  deleteConfigCommand;
     private Vector items;
 
     public FeedList(String title) {
@@ -67,7 +68,6 @@ public class FeedList extends List implements CommandListener {
         PersistentManager pm = PersistentManager.getInstance();
         Enumeration enumeration;
 
-        //TODO: put in items and show by iterating items?
         try {
             enumeration = pm.loadFeeds().elements();
             Feed feed;
@@ -77,9 +77,9 @@ public class FeedList extends List implements CommandListener {
                 this.append(feed.getName(), ImageLoader.getImage(Constants.IMG_DEFAULT_FEED));
             }
         } catch (RecordStoreException ex) {
-            new WarningAlert("Error", "Some error while loading occurred.. " + ex.toString()).show();
+            new WarningAlert("Error", "Some error while loading occurred!" + ex.toString()).show();
         } catch (Throwable ex) {
-            new WarningAlert("Error", "Some error occurred.." + ex.toString()).show();
+            new WarningAlert("Error", "Sorry, some general occurred!" + ex.toString()).show();
         }
 
     }
@@ -97,45 +97,60 @@ public class FeedList extends List implements CommandListener {
             ConfigurationForm configForm = new ConfigurationForm(this);
             ReadJ2ME.showOnDisplay(configForm);
             return;
-        }
-
-        int index = this.getSelectedIndex();
-
-        if (c == addFeedCommand) {
+        } else if (c == addFeedCommand) {
             FeedForm feedView = new FeedForm(this);
             ReadJ2ME.showOnDisplay(feedView);
-        } else if (c == deleteFeedCommand) {
-            
-            if(index >= 0){
-                Feed selectedFeed = (Feed) items.elementAt(index);     
-                PersistentManager.getInstance().removeFeed(selectedFeed, true);
-                //remove from vector and list
-                items.removeElementAt(index);
-                this.delete(index);
-            }
-        } else if (c == listRSCommand) {
+            return;
+        } 
+
+        
+        // TEST COMMANDS that will be deleted **********************************
+        else if (c == listRSCommand) {
             //TODO: to be removed after development
             PersistentManager.getInstance().listRS();
-        } else if (c == eraseRSCommand){
+        } else if (c == eraseRSCommand) {
             //TODO: to be removed after development
             PersistentManager.getInstance().eraseRS();
             refreshList();
         } else if (c == testCommand) {
-            //TODO: to be removed after development
-            PersistentManager.getInstance().addFeed("heise security", "http://www.heise.de/security/news/news-atom.xml");
+            try {
+                //TODO: to be removed after development
+                PersistentManager.getInstance().addFeed("heise security", "http://www.heise.de/security/news/news-atom.xml");
+            } catch (RecordStoreFullException ex) {
+                ex.printStackTrace();
+            } catch (RecordStoreException ex) {
+                ex.printStackTrace();
+            }
             refreshList();
         } else if (c == deleteConfigCommand) {
             //TODO: to be removed after development
             PersistentManager.getInstance().deleteConfig();
-            
-        } else if (c == openCommand || d == this) {
-            if (index >= 0) {
-                Feed selectedFeed = (Feed) items.elementAt(index);
-                NewsItemList list = new NewsItemList(selectedFeed, this);
-                ReadJ2ME.showOnDisplay(list);
-            } else {
-                new WarningAlert("Info", "Add a feed first..").show();
+        }
+        // END TEST COMMANDS that will be deleted ******************************
+
+       
+        int index = this.getSelectedIndex();
+
+        if (index >= 0) {
+            Feed selectedFeed = (Feed) items.elementAt(index);
+
+            try {
+                if (c == deleteFeedCommand) {
+                    PersistentManager.getInstance().removeFeed(selectedFeed, true);
+                    //remove from vector and list
+                    items.removeElementAt(index);
+                    this.delete(index);
+                } else if (c == openCommand || d == this) {
+                    NewsItemList list = new NewsItemList(selectedFeed, this);
+                    ReadJ2ME.showOnDisplay(list);
+                }
+            } catch (RecordStoreFullException ex) {
+                new ErrorAlert("Memory", "Memory full!").show();
+            } catch (RecordStoreException ex) {
+                new ErrorAlert("Memory", "Sorry, memory error!").show();
             }
+        } else {
+            new WarningAlert("Info", "Add a feed first..").show();
         }
     }
 }

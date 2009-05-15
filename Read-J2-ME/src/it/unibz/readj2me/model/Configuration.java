@@ -52,14 +52,10 @@ public class Configuration implements IPersistable {
             try {
                 instance.setMaxNewsItems(maxNewsItems = Integer.parseInt(tempMax));
             } catch (Throwable t) {
-                //TODO: remove then..
-                new WarningAlert("parsing settings maxNewsItems", "parsing settings maxNewsITems").show();
-                t.printStackTrace();
+                //nothing
             }
         } catch (Throwable t) {
-            //TODO:
-            //throw new Exception("Parsing error in RecordStore");
-            t.printStackTrace();
+            //Future: could delete record since not valid
         }
     }
 

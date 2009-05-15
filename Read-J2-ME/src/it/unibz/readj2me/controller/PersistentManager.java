@@ -161,95 +161,50 @@ public class PersistentManager {
         rs.closeRecordStore();
     }
 
-    public void addFeed(String name, String url) {
+    public void addFeed(String name, String url) throws RecordStoreFullException, RecordStoreException {
         String rsItemsName;
-        try {
-            rsItemsName = getRandomRecordStoreName();
-            RecordStore rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, true);
-            Feed newFeed = new Feed(url, name, rsItemsName, rs.getNextRecordID());
-            byte[] row = newFeed.getBytes();
-            rs.addRecord(row, 0, row.length);
-            rs.closeRecordStore();
-        } catch (RecordStoreFullException ex) {
-            ex.printStackTrace();
-            new WarningAlert("adding feed", "1: " + ex.toString()).show();
-        } catch (RecordStoreException ex) {
-            ex.printStackTrace();
-            new WarningAlert("adding feed", "2: " + ex.toString()).show();
-        } catch (Throwable t) {
-            new WarningAlert("adding feed", "3: " + t.toString()).show();
-        }
+        rsItemsName = getRandomRecordStoreName();
+        RecordStore rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, true);
+        Feed newFeed = new Feed(url, name, rsItemsName, rs.getNextRecordID());
+        byte[] row = newFeed.getBytes();
+        rs.addRecord(row, 0, row.length);
+        rs.closeRecordStore();
     }
 
-    public void removeNewsItem(NewsItem item, String rsName){
+    public void removeNewsItem(NewsItem item, String rsName) throws RecordStoreFullException, RecordStoreException {
         RecordStore rs;
-        try{
-            rs = RecordStore.openRecordStore(rsName, false);
-            rs.deleteRecord(item.getRs_id());
-            rs.closeRecordStore();
-        } catch (RecordStoreFullException ex) {
-            ex.printStackTrace();
-            return;
-        } catch (RecordStoreNotFoundException ex) {
-            // nothing..
-            return;
-        } catch (RecordStoreException ex) {
-            ex.printStackTrace();
-        }
+        rs = RecordStore.openRecordStore(rsName, false);
+        rs.deleteRecord(item.getRs_id());
+        rs.closeRecordStore();
     }
 
-    public void removeTag(Tag tag) {
+    public void removeTag(Tag tag) throws RecordStoreFullException, RecordStoreException {
         RecordStore rs;
-        try {
-            rs = RecordStore.openRecordStore(Constants.TAGS_RS_NAME, false);
-            rs.deleteRecord(tag.getRs_id());
-            rs.closeRecordStore();
-        } catch (RecordStoreFullException ex) {
-            ex.printStackTrace();
-            return;
-        } catch (RecordStoreNotFoundException ex) {
-            ex.printStackTrace();
-            return;
-        } catch (RecordStoreException ex) {
-            ex.printStackTrace();
-        }
+        rs = RecordStore.openRecordStore(Constants.TAGS_RS_NAME, false);
+        rs.deleteRecord(tag.getRs_id());
+        rs.closeRecordStore();
     }
 
-    public void removeFeed(Feed feed, boolean removeItemsRecordStore) {
+    public void removeFeed(Feed feed, boolean removeItemsRecordStore) throws RecordStoreFullException, RecordStoreException {
         RecordStore rs;
-        try {
-            rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, false);
-            rs.deleteRecord(feed.getRs_id());
-            rs.closeRecordStore();
-            if(removeItemsRecordStore){
-                RecordStore.deleteRecordStore(feed.getItemsRecordStoreName());
-            }
-            
-        } catch (RecordStoreFullException ex) {
-            ex.printStackTrace();
-            return;
-        } catch (RecordStoreNotFoundException ex) {
-            ex.printStackTrace();
-            return;
-        } catch (RecordStoreException ex) {
-            ex.printStackTrace();
+        rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, false);
+        rs.deleteRecord(feed.getRs_id());
+        rs.closeRecordStore();
+        if (removeItemsRecordStore) {
+            RecordStore.deleteRecordStore(feed.getItemsRecordStoreName());
         }
     }
 
-    public byte[] loadConfiguration() {
-        try {
-            RecordStore rs = RecordStore.openRecordStore(Constants.CONFIG_RS_NAME, false);
-            RecordEnumeration re = rs.enumerateRecords(null, null, false);
-            byte[] rawRecord = null;
-            while (re.hasNextElement()) {
-                rawRecord = re.nextRecord();
-                break;
-            }
-            rs.closeRecordStore();
-            return rawRecord;
-        } catch (RecordStoreException ex) {
-            return null;
+    public byte[] loadConfiguration() throws RecordStoreException {
+        RecordStore rs = RecordStore.openRecordStore(Constants.CONFIG_RS_NAME, false);
+        RecordEnumeration re = rs.enumerateRecords(null, null, false);
+        byte[] rawRecord = null;
+        while (re.hasNextElement()) {
+            rawRecord = re.nextRecord();
+            break;
         }
+        rs.closeRecordStore();
+        return rawRecord;
     }
 
     public void addConfiguration() throws RecordStoreFullException, RecordStoreException {

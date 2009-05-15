@@ -100,9 +100,7 @@ public class NewsItem implements IPersistable {
             try {
                 rs_id = Integer.parseInt(tempRs_Id);
             } catch (Throwable t) {
-                //TODO: remove then..
-                new WarningAlert("parsing newsitem id", "parsing newsitem id").show();
-                t.printStackTrace();
+                //nothing
             }
 
             Tag tag;
@@ -118,17 +116,14 @@ public class NewsItem implements IPersistable {
                 try {
                     tempRsId = Integer.parseInt(tempString.substring(tempIndex + 1, tempString.length()));
                 } catch (NumberFormatException ex) {
-                    //TODO
-                    ex.printStackTrace();
+                    //nothing
                 }
                 tag = new Tag(tempName, tempRsId);
                 getTags().addElement(tag);
             }
 
         } catch (Throwable t) {
-            //TODO:
-            //throw new Exception("Parsing error in RecordStore");
-            t.printStackTrace();
+            //Future: could delete record since not valid
         }
     }
 

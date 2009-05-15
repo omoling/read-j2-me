@@ -35,12 +35,10 @@ public class NewsItemList extends List implements CommandListener, Runnable {
     private Feed feed;
     private Vector items = new Vector();
     private XmlReader xmlReader;
-    private Command backCommand, openCommand, updateCommand, deleteItemCommand,
-            markUnreadCommand, filterByTagCommand, searchCommand,
-            sortByDateCommand, sortByTitleAscCommand, sortByTitleDescCommand;
+    private Command backCommand,  openCommand,  updateCommand,  deleteItemCommand,  markUnreadCommand,  filterByTagCommand,  searchCommand,  sortByDateCommand,  sortByTitleAscCommand,  sortByTitleDescCommand;
     private RecordFilter newsItemsFilter = null;
-    private boolean filtered = false, changed = false;
-    private int sortByDate = 1, sortByTitleAsc = 2, sortByTitleDesc = 3;
+    private boolean filtered = false,  changed = false;
+    private int sortByDate = 1,  sortByTitleAsc = 2,  sortByTitleDesc = 3;
     private int sortType = 1;
 
     public NewsItemList(Feed feed, Displayable parent) {
@@ -144,7 +142,7 @@ public class NewsItemList extends List implements CommandListener, Runnable {
             }
              */
             item = null;
-            
+
         } catch (RecordStoreException ex) {
             new WarningAlert("Error", "Was unable to retrieve news from memory.").show();
         } catch (Throwable ex) {
@@ -168,7 +166,7 @@ public class NewsItemList extends List implements CommandListener, Runnable {
                 //remove already known items
                 knownIndexes = new boolean[newItems.size()];
                 NewsItem item;
-                for(int i = 0; i < newItems.size(); i++) {
+                for (int i = 0; i < newItems.size(); i++) {
                     item = (NewsItem) newItems.elementAt(i);
                     if (feed.getKnownIds().contains(item.getId())) {
                         knownIndexes[i] = true;
@@ -176,7 +174,7 @@ public class NewsItemList extends List implements CommandListener, Runnable {
                         knownIndexes[i] = false;
                     }
                 }
-                for(int i = knownIndexes.length - 1; i >= 0; i--) {
+                for (int i = knownIndexes.length - 1; i >= 0; i--) {
                     if (knownIndexes[i]) {
                         newItems.removeElementAt(i);
                     }
@@ -186,9 +184,9 @@ public class NewsItemList extends List implements CommandListener, Runnable {
                 //add new items
                 PersistentManager.getInstance().addNewsItems(getFeed(), newItems);
                 newItems = null;
-                
+
                 //if limit > 0 delete old items if there are more than limit
-                if(Configuration.getInstance().getMaxNewsItems() > 0) {
+                if (Configuration.getInstance().getMaxNewsItems() > 0) {
                     Vector currentItems = PersistentManager.getInstance().loadNewsItemsByDate(feed.getItemsRecordStoreName(), null, true);
                     int toBeDeleted = currentItems.size() - (Configuration.getInstance().getMaxNewsItems() * 10);
                     if (toBeDeleted > 0) {
@@ -211,18 +209,18 @@ public class NewsItemList extends List implements CommandListener, Runnable {
 
                 updateList();
             }
-            
+
         } catch (IOException ex) {
             new ErrorAlert("Network", "Could not retrieve any data. Check the URL on its correctness.").show();
         } catch (RecordStoreFullException ex) {
-                new ErrorAlert("Memory", "Memory is full!").show();
+            new ErrorAlert("Memory", "Memory is full!").show();
         } catch (XmlPullParserException ex) {
-                new ErrorAlert("Error", "Error in parsing data, XML format not supported!").show();
-                //TODO
-                System.out.println(ex.getMessage());
-                ex.printStackTrace();
+            new ErrorAlert("Error", "Error in parsing data, XML format not supported!").show();
+            //TODO
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
         } catch (Exception ex) {
-                new ErrorAlert("Error", "Sorry, an error occurred!").show();
+            new ErrorAlert("Error", "Sorry, an error occurred!").show();
         } finally {
             xmlReader = null;
             this.setTicker(null);
@@ -280,8 +278,8 @@ public class NewsItemList extends List implements CommandListener, Runnable {
         if (index >= 0) {
             NewsItem selectedItem = (NewsItem) items.elementAt(index);
 
-            if (c == markUnreadCommand) {
-                try {
+            try {
+                if (c == markUnreadCommand) {
                     selectedItem.setRead(false);
                     PersistentManager.getInstance().updateNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
                     //update list and vector
@@ -289,45 +287,39 @@ public class NewsItemList extends List implements CommandListener, Runnable {
                     //had to be removed because of emulator bug on setFont
                     //this.setFont(index, Font.getFont(Font.FACE_SYSTEM, Font.STYLE_BOLD, Font.SIZE_MEDIUM));
                     changed = true;
-                } catch (RecordStoreFullException ex) {
-                    new ErrorAlert("Memory", "Memory full!").show();
-                } catch (RecordStoreException ex) {
-                    new ErrorAlert("Memory", "Sorry, memory error!").show();
-                }
-            } else if (c == deleteItemCommand) {
-                PersistentManager.getInstance().removeNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
-                //update list and vector
-                this.delete(index);
-                items.removeElementAt(index);
-                changed = true;
-            } else if (c == openCommand || d == this) {
-                //show view
-                NewsItemForm itemView = new NewsItemForm(selectedItem, feed.getItemsRecordStoreName(), this);
-                ReadJ2ME.showOnDisplay(itemView);
-                //update item's read-status
-                if (!selectedItem.isRead()) {
-                    try {
+                } else if (c == deleteItemCommand) {
+                    PersistentManager.getInstance().removeNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
+                    //update list and vector
+                    this.delete(index);
+                    items.removeElementAt(index);
+                    changed = true;
+                } else if (c == openCommand || d == this) {
+                    //show view
+                    NewsItemForm itemView = new NewsItemForm(selectedItem, feed.getItemsRecordStoreName(), this);
+                    ReadJ2ME.showOnDisplay(itemView);
+                    //update item's read-status
+                    if (!selectedItem.isRead()) {
                         selectedItem.setRead(true);
                         PersistentManager.getInstance().updateNewsItem(selectedItem, getFeed().getItemsRecordStoreName());
                         //had to be removed because of emulator bug on setFont
                         //this.setFont(index, Font.getDefaultFont());
                         this.set(index, selectedItem.getTitle(), getNewsItemIcon(selectedItem));
                         changed = true;
-                    } catch (RecordStoreFullException ex) {
-                        new ErrorAlert("Memory", "Memory full!").show();
-                    } catch (RecordStoreException ex) {
-                        new ErrorAlert("Memory", "Sorry, memory error!").show();
                     }
                 }
+            } catch (RecordStoreFullException ex) {
+                new ErrorAlert("Memory", "Memory full!").show();
+            } catch (RecordStoreException ex) {
+                new ErrorAlert("Memory", "Sorry, memory error!").show();
             }
-
         } else {
-            if(filtered) {
+            if (filtered) {
                 new WarningAlert("Info", "No news matching!").show();
             } else {
                 new WarningAlert("Info", "No news! Perform an update..").show();
             }
         }
+
     }
 
     private Image getNewsItemIcon(NewsItem newsItem) {

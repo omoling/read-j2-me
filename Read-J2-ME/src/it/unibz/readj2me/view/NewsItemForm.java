@@ -92,7 +92,7 @@ public class NewsItemForm extends Form implements CommandListener, ItemCommandLi
     public void commandAction(Command c, Displayable d) {
         if (c == backCommand) {
             if(changed) {
-                //TODO: not possible to update single list-entry?
+                //could be replaced by updating single list-entry
                 ((NewsItemList) parent).updateList();
             }
             ReadJ2ME.showOnDisplay(parent);

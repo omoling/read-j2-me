@@ -8,6 +8,7 @@ import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.*;
+import javax.microedition.rms.RecordStoreException;
 
 /**
  *
@@ -33,11 +34,15 @@ public class ReadJ2ME extends MIDlet {
     }
 
     private void loadConfiguration() {
-        //load Configuration if any
-        byte[] config = PersistentManager.getInstance().loadConfiguration();
-        if (config != null) {
-            Configuration configuration = Configuration.getInstance();
-            configuration.createFromBytes(config);
+        try {
+            //load Configuration if any, else default will be loaded
+            byte[] config = PersistentManager.getInstance().loadConfiguration();
+            if (config != null) {
+                Configuration configuration = Configuration.getInstance();
+                configuration.createFromBytes(config);
+            }
+        } catch (RecordStoreException ex) {
+            // nothing, will load default configuration
         }
     }
 
