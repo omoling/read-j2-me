@@ -1,6 +1,5 @@
 package it.unibz.readj2me.model;
 
-import it.unibz.readj2me.view.WarningAlert;
 
 /**
  *

@@ -1,7 +1,8 @@
-
 package it.unibz.readj2me.view;
 
 import it.unibz.readj2me.ReadJ2ME;
+import it.unibz.readj2me.controller.ImageLoader;
+import it.unibz.readj2me.model.Constants;
 import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 
@@ -12,7 +13,7 @@ import javax.microedition.lcdui.AlertType;
 public class ErrorAlert extends Alert {
     
     public ErrorAlert(String title, String text) {
-         super(title, text, null, AlertType.ERROR);
+         super(title, text, ImageLoader.getImage(Constants.IMG_ERROR), AlertType.ERROR);
          this.setTimeout(FOREVER);
     }
     

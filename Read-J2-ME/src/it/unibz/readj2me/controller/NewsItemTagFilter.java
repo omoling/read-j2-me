@@ -25,6 +25,8 @@ public class NewsItemTagFilter implements RecordFilter {
     public boolean matches(byte[] candidate) {
         NewsItem candidateNewsItem = new NewsItem(candidate);
         String nameCandidateTag, nameFilterTag;
+
+        //check for each tag assigned to the newsitem if it matches one of the filter-tags
         for (int i = 0; i < candidateNewsItem.getTags().size(); i++) {
             nameCandidateTag = ((Tag) candidateNewsItem.getTags().elementAt(i)).getName();
             if (filterTags != null && filterTags.size() > 0) {

@@ -152,8 +152,8 @@ public class NewsItemList extends List implements CommandListener, Runnable {
 
     public void run() {
         Ticker updateTicker = new Ticker("updating..");
-
         this.setTicker(updateTicker);
+
         xmlReader = XmlReader.getInstance();
         Vector newItems;
         boolean[] knownIndexes;
@@ -216,9 +216,6 @@ public class NewsItemList extends List implements CommandListener, Runnable {
             new ErrorAlert("Memory", "Memory is full!").show();
         } catch (XmlPullParserException ex) {
             new ErrorAlert("Error", "Error in parsing data, XML format not supported!").show();
-            //TODO
-            System.out.println(ex.getMessage());
-            ex.printStackTrace();
         } catch (Exception ex) {
             new ErrorAlert("Error", "Sorry, an error occurred!").show();
         } finally {

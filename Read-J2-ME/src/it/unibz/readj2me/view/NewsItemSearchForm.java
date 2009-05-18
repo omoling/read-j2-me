@@ -12,13 +12,11 @@ import javax.microedition.lcdui.TextField;
 public class NewsItemSearchForm extends InputForm {
 
     private Feed feed;
-    private Displayable parentDisplay;
     private TextField searchField;
 
     public NewsItemSearchForm(Feed feed, Displayable parentDisplay) {
         super("Search for:", parentDisplay, parentDisplay, "Search");
         this.feed = feed;
-        this.parentDisplay = parentDisplay;
 
         searchField = new TextField("Search string", "Android", 20, TextField.ANY);
         searchField.setLayout(Item.LAYOUT_LEFT);

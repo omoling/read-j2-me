@@ -17,7 +17,6 @@ import javax.microedition.rms.RecordStoreException;
 public class ReadJ2ME extends MIDlet {
 
     private Display display;
-
     private boolean initialized = false;
     private static ReadJ2ME instance;
 
@@ -54,22 +53,21 @@ public class ReadJ2ME extends MIDlet {
         notifyDestroyed();
     }
 
-    public static void showOnDisplay(Displayable d){
+    public static void showOnDisplay(Displayable d) {
         instance.display.setCurrent(d);
     }
 
-    public static void destroy(boolean unconditional){
+    public static void destroy(boolean unconditional) {
         instance.destroyApp(unconditional);
     }
 
-    public static void platReq(String url){
+    public static void platReq(String url) {
         try {
-          if(instance.platformRequest(url)) {
-             new WarningAlert("Warning", "Either no browsing capabilities\nor the Midlet has to be quit to view the page.").show();
-          }
+            if (instance.platformRequest(url)) {
+                new WarningAlert("Warning", "Either no browsing capabilities\nor the Midlet has to be quit to view the page.").show();
+            }
         } catch (ConnectionNotFoundException ex) {
             new it.unibz.readj2me.view.ErrorAlert("Error", "No connection available.").show();
         }
     }
-    
 }

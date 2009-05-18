@@ -3,6 +3,7 @@ package it.unibz.readj2me.view;
 import it.unibz.readj2me.controller.PersistentManager;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Item;
+import javax.microedition.lcdui.Spacer;
 import javax.microedition.lcdui.TextField;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
@@ -20,6 +21,7 @@ public class FeedForm extends InputForm {
 
         feedNameField = new TextField("Name", "heise mobil atom", 30, TextField.ANY);
         feedNameField.setLayout(Item.LAYOUT_LEFT);
+        this.append(new Spacer(1, 5));
         feedUrlField = new TextField("Url", null, 300, TextField.URL);
         feedUrlField.setString("http://www.heise.de/mobil/newsticker/heise-atom.xml");
         feedUrlField.setLayout(Item.LAYOUT_NEWLINE_BEFORE);

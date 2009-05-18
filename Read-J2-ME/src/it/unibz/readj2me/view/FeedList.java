@@ -23,8 +23,6 @@ public class FeedList extends List implements CommandListener {
     private Command exitCommand,  openCommand,  addFeedCommand,  deleteFeedCommand;
     private Command manageTagCommand,  configCommand;
 
-    //test commands
-    private Command eraseRSCommand,  listRSCommand,  testCommand,  deleteConfigCommand;
     private Vector items;
 
     public FeedList(String title) {
@@ -38,24 +36,12 @@ public class FeedList extends List implements CommandListener {
         manageTagCommand = new Command("Manage Tags", Command.SCREEN, 3);
         configCommand = new Command("Configuration", Command.SCREEN, 4);
 
-        //test commands
-        eraseRSCommand = new Command("Erase RS", Command.SCREEN, 5);
-        listRSCommand = new Command("List RS", Command.SCREEN, 4);
-        testCommand = new Command("Test", Command.SCREEN, 6);
-        deleteConfigCommand = new Command("Delete Config", Command.SCREEN, 7);
-
         this.addCommand(exitCommand);
         this.addCommand(openCommand);
         this.addCommand(addFeedCommand);
         this.addCommand(deleteFeedCommand);
         this.addCommand(manageTagCommand);
         this.addCommand(configCommand);
-
-        //test commands
-        this.addCommand(eraseRSCommand);
-        this.addCommand(listRSCommand);
-        this.addCommand(testCommand);
-        this.addCommand(deleteConfigCommand);
 
         this.setCommandListener(this);
         refreshList();
@@ -101,33 +87,7 @@ public class FeedList extends List implements CommandListener {
             FeedForm feedView = new FeedForm(this);
             ReadJ2ME.showOnDisplay(feedView);
             return;
-        } 
-
-        
-        // TEST COMMANDS that will be deleted **********************************
-        else if (c == listRSCommand) {
-            //TODO: to be removed after development
-            PersistentManager.getInstance().listRS();
-        } else if (c == eraseRSCommand) {
-            //TODO: to be removed after development
-            PersistentManager.getInstance().eraseRS();
-            refreshList();
-        } else if (c == testCommand) {
-            try {
-                //TODO: to be removed after development
-                PersistentManager.getInstance().addFeed("heise security", "http://www.heise.de/security/news/news-atom.xml");
-            } catch (RecordStoreFullException ex) {
-                ex.printStackTrace();
-            } catch (RecordStoreException ex) {
-                ex.printStackTrace();
-            }
-            refreshList();
-        } else if (c == deleteConfigCommand) {
-            //TODO: to be removed after development
-            PersistentManager.getInstance().deleteConfig();
         }
-        // END TEST COMMANDS that will be deleted ******************************
-
        
         int index = this.getSelectedIndex();
 
