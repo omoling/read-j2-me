@@ -4,9 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import javax.microedition.io.Connector;
-import javax.microedition.io.ContentConnection;
 import javax.microedition.io.HttpConnection;
 import javax.microedition.io.HttpsConnection;
 
@@ -36,7 +34,7 @@ public class Networking {
             throw new IOException("" + conn.getResponseCode());
         }
 
-        // long to int may cause problem if size is very big
+        //
         int length = (int)conn.getLength();
 
         byte[] content = null;

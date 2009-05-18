@@ -47,14 +47,12 @@ public class XmlReader {
             xmlParser.setInput(in, ENCODING);
             int event;
             while ((event = xmlParser.next()) != XmlPullParser.END_DOCUMENT) {
-
                 if (event == XmlPullParser.START_TAG && xmlParser.getName().equals(TAG_ENTRY)) {
                     NewsItem item;
                     item = populateItem(xmlParser);
 
                     entries.addElement(item);
                 }
-
             }
 
         }

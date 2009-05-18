@@ -21,5 +21,7 @@ public class Constants {
     public static final String IMG_DEFAULT_FEED_L = "/feed_l.png";
     public static final String IMG_GREY_FEED_L = "/feed_grey_l.png";
     public static final String IMG_TAG = "/tag_12.png";
+    public static final String IMG_ERROR = "/error.png";
+    public static final String IMG_WARNING = "/warning.png";
 
 }

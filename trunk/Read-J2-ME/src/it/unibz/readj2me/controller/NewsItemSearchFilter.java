@@ -22,7 +22,6 @@ public class NewsItemSearchFilter implements RecordFilter {
         } else {
             return false;
         }
-
     }
 
 }

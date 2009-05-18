@@ -5,7 +5,6 @@ import it.unibz.readj2me.model.Constants;
 import it.unibz.readj2me.model.Feed;
 import it.unibz.readj2me.model.NewsItem;
 import it.unibz.readj2me.model.Tag;
-import it.unibz.readj2me.view.WarningAlert;
 import java.util.Enumeration;
 import java.util.Random;
 import java.util.Vector;
@@ -15,7 +14,6 @@ import javax.microedition.rms.RecordFilter;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
-import javax.microedition.rms.RecordStoreNotFoundException;
 
 /**
  *
@@ -25,11 +23,11 @@ public class PersistentManager {
 
     public static PersistentManager persistentManager = null;
 
-    private PersistentManager(){
+    private PersistentManager() {
     }
 
-    public static PersistentManager getInstance(){
-        if(persistentManager == null){
+    public static PersistentManager getInstance() {
+        if (persistentManager == null) {
             persistentManager = new PersistentManager();
         }
         return persistentManager;
@@ -40,12 +38,12 @@ public class PersistentManager {
         String name;
 
         Random generator = new Random();
-        
+
         //find an unused name
         do {
             i = Math.abs(generator.nextInt()) % 10000;
             name = Constants.RS_PREFIX + "" + i;
-        } while(!isNameFree(name));
+        } while (!isNameFree(name));
 
         //"occupy" the name
         RecordStore rs = RecordStore.openRecordStore(name, true);
@@ -56,11 +54,11 @@ public class PersistentManager {
 
     private boolean isNameFree(String name) {
         String[] names = RecordStore.listRecordStores();
-        if(names == null) { 
+        if (names == null) {
             return true;
         }
-        for(int i = 0; i < names.length; i++){
-            if (names[i] != null && names[i].equals(name)){
+        for (int i = 0; i < names.length; i++) {
+            if (names[i] != null && names[i].equals(name)) {
                 return false;
             }
         }
@@ -73,7 +71,7 @@ public class PersistentManager {
 
         RecordEnumeration re = rs.enumerateRecords(null, new FeedComparator(), false);
         byte[] rawRecord;
-        while(re.hasNextElement()){
+        while (re.hasNextElement()) {
             rawRecord = re.nextRecord();
             items.addElement(new Feed(rawRecord));
         }
@@ -88,7 +86,7 @@ public class PersistentManager {
 
         RecordEnumeration re = rs.enumerateRecords(null, new TagComparator(), false);
         byte[] rawRecord;
-        while(re.hasNextElement()) {
+        while (re.hasNextElement()) {
             rawRecord = re.nextRecord();
             items.addElement(new Tag(rawRecord));
         }
@@ -111,7 +109,7 @@ public class PersistentManager {
 
         RecordEnumeration re = rs.enumerateRecords(filter, comparator, false);
         byte[] rawRecord;
-        while(re.hasNextElement()) {
+        while (re.hasNextElement()) {
             rawRecord = re.nextRecord();
             items.addElement(new NewsItem(rawRecord));
         }
@@ -221,45 +219,5 @@ public class PersistentManager {
         rs.addRecord(row, 0, row.length);
         rs.closeRecordStore();
     }
-
-
-    // ****************
-
-    //testing
-    public void eraseRS(){
-        String[] stores = RecordStore.listRecordStores();
-        for(int i = 0; i < stores.length; i++){
-            try {
-                if(stores[i].startsWith(Constants.RS_PREFIX)){
-                    System.out.println("going to remove: " + stores[i]);
-                    RecordStore.deleteRecordStore(stores[i]);
-                    System.out.println("removed        : " + stores[i]);
-                }
-            } catch (RecordStoreNotFoundException ex) {
-                ex.printStackTrace();
-            } catch (RecordStoreException ex) {
-                ex.printStackTrace();
-            } 
-        }
-    }
-
-    //testing
-    public void listRS(){
-        String[] stores = RecordStore.listRecordStores();
-        for(int i = 0; i < stores.length; i++){
-            System.out.println(stores[i]);
-        }
-    }
-
-    //testing
-    public void deleteConfig() {
-        try {
-            RecordStore.deleteRecordStore(Constants.CONFIG_RS_NAME);
-        } catch (RecordStoreNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (RecordStoreException ex) {
-            ex.printStackTrace();
-        } 
-    }
-
+    
 }

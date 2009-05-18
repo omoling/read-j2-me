@@ -14,6 +14,7 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.List;
+import javax.microedition.lcdui.Ticker;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 
@@ -24,10 +25,10 @@ import javax.microedition.rms.RecordStoreFullException;
 public class TagList extends List implements CommandListener {
 
     private Displayable parent;
-    private Command backCommand, addTagCommand, deleteTagCommand;
+    private Command backCommand,  addTagCommand,  deleteTagCommand;
     private Vector items;
 
-    public TagList(String title, Displayable parent){
+    public TagList(String title, Displayable parent) {
         super(title, List.IMPLICIT);
         this.parent = parent;
         this.items = new Vector();
@@ -73,9 +74,12 @@ public class TagList extends List implements CommandListener {
             TagForm tagView = new TagForm(this);
             ReadJ2ME.showOnDisplay(tagView);
         } else if (c == deleteTagCommand) {
+            Ticker deletingTicker = new Ticker("deleting tag from newsitems..");
+            this.setTicker(deletingTicker);
+
             int index = this.getSelectedIndex();
-            if (index >= 0) {
-                try {
+            try {
+                if (index >= 0) {
                     Tag selectedTag = (Tag) getItems().elementAt(index);
                     PersistentManager pm = PersistentManager.getInstance();
 
@@ -94,7 +98,7 @@ public class TagList extends List implements CommandListener {
                             tags = currentNewsItem.getTags();
                             int tagIndex = -1;
                             for (int i = 0; i < tags.size(); i++) {
-                                if (((Tag)tags.elementAt(i)).equals(selectedTag)) {
+                                if (((Tag) tags.elementAt(i)).equals(selectedTag)) {
                                     tagIndex = i;
                                     break;
                                 }
@@ -109,12 +113,13 @@ public class TagList extends List implements CommandListener {
                     //remove from vector and list
                     getItems().removeElementAt(index);
                     this.delete(index);
-
-                } catch (RecordStoreFullException ex) {
-                    new ErrorAlert("Memory", "Memory full!").show();
-                } catch (RecordStoreException ex) {
-                    new ErrorAlert("Memory", "Sorry, memory error!").show();
                 }
+            } catch (RecordStoreFullException ex) {
+                new ErrorAlert("Memory", "Memory full!").show();
+            } catch (RecordStoreException ex) {
+                new ErrorAlert("Memory", "Sorry, memory error!").show();
+            } finally {
+                this.setTicker(null);
             }
         }
     }
@@ -125,5 +130,4 @@ public class TagList extends List implements CommandListener {
     public Vector getItems() {
         return items;
     }
-
 }
