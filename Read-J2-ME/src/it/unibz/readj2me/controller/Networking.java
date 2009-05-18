@@ -58,17 +58,18 @@ public class Networking {
                 }
                 readLength = is.read(content, index, chunkSize);
                 index += readLength;
-            //} while (readLength == chunkSize);
             } while (readLength != -1);
             length = index;
-
-            System.out.println("index: " + index + "; content-size: " + content.length);
         }
 
-        String temp = new String(content);
-        System.out.println("content: " + temp);
+        //check for initial space character
+        String tempContent = new String(content);
+        int index1 = tempContent.indexOf("<");
+        if (index1 != -1 && index1 != 0) {
+            tempContent = tempContent.substring(index1, tempContent.length());
+        }
 
-        return new ByteArrayInputStream(content);
+        return new ByteArrayInputStream(tempContent.getBytes());
     }
 
 }
