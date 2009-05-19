@@ -1,4 +1,4 @@
-package it.unibz.readj2me.controller;
+package it.unibz.readj2me.controller.comparators;
 
 import it.unibz.readj2me.model.Feed;
 import javax.microedition.rms.RecordComparator;
