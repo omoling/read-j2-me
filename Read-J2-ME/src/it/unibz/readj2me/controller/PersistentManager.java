@@ -1,5 +1,9 @@
 package it.unibz.readj2me.controller;
 
+import it.unibz.readj2me.controller.comparators.TagComparator;
+import it.unibz.readj2me.controller.comparators.NewsItemTitleComparator;
+import it.unibz.readj2me.controller.comparators.NewsItemDateComparator;
+import it.unibz.readj2me.controller.comparators.FeedComparator;
 import it.unibz.readj2me.model.Configuration;
 import it.unibz.readj2me.model.Constants;
 import it.unibz.readj2me.model.Feed;
