@@ -10,6 +10,7 @@ import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 
 /**
+ * Form where the user can select the desired tags.
  *
  * @author Anton Dignoes, Omar Moling
  */

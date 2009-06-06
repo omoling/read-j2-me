@@ -2,6 +2,7 @@ package it.unibz.readj2me.model;
 
 
 /**
+ * Represents a Tag.
  *
  * @author Anton Dignoes, Omar Moling
  */

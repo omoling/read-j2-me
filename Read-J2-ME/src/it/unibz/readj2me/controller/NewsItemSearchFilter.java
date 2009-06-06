@@ -4,6 +4,7 @@ import it.unibz.readj2me.model.NewsItem;
 import javax.microedition.rms.RecordFilter;
 
 /**
+ * RecordFilter to filter NewsItems by title.
  *
  * @author Anton Dignoes, Omar Moling
  */

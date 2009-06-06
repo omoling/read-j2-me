@@ -4,6 +4,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 /**
+ * Represents a Feed
  *
  * @author Anton Dignoes, Omar Moling
  */

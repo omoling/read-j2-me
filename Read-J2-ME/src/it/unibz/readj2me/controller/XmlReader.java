@@ -8,6 +8,7 @@ import org.kxml2.io.*;
 import org.xmlpull.v1.*;
 
 /**
+ * Class responsible for parsing the Atom-XML data.
  *
  * @author Anton Dignoes, Omar Moling
  */
@@ -29,6 +30,10 @@ public class XmlReader {
         networking = new Networking();
     }
 
+    /**
+     * Singleton: to get the one instance
+     * @return the only instance
+     */
     public static XmlReader getInstance() {
         if (xmlReader == null) {
             xmlReader = new XmlReader();
@@ -36,6 +41,13 @@ public class XmlReader {
         return xmlReader;
     }
 
+    /**
+     * Gets all news entries contained in the given url
+     * @param feedUrl the url fo the feed
+     * @return a vector of NewsItems
+     * @throws java.io.IOException
+     * @throws org.xmlpull.v1.XmlPullParserException
+     */
     public Vector getEntries(String feedUrl) throws IOException, XmlPullParserException {
 
         Vector entries = new Vector();
@@ -60,6 +72,13 @@ public class XmlReader {
         return entries;
     }
 
+    /**
+     * Parses the <entry> tag
+     * @param xmlParser
+     * @return
+     * @throws org.xmlpull.v1.XmlPullParserException
+     * @throws java.io.IOException
+     */
     private NewsItem populateItem(KXmlParser xmlParser) throws XmlPullParserException, IOException {
         NewsItem item = new NewsItem();
 

@@ -9,6 +9,7 @@ import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 
 /**
+ * Form used to add a new feed.
  *
  * @author Anton Dignoes, Omar Moling
  */

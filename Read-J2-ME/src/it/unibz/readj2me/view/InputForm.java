@@ -7,6 +7,10 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.Form;
 
 /**
+ * Abstract class used by all classes that require some input from the user.
+ * The class provides the basic commands to save/accept or go back and
+ * the basic structure to check whether the input is valid and to save/accept
+ * the input. The actual implementation has to be done by the subclasses.
  *
  * @author Anton Dignoes, Omar Moling
  */

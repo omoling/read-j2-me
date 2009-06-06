@@ -1,7 +1,7 @@
 package it.unibz.readj2me.model;
 
 /**
- *
+ * Class containing the application's configuration
  * @author Anton Dignoes, Omar Moling
  */
 public class Configuration implements IPersistable {
@@ -12,6 +12,10 @@ public class Configuration implements IPersistable {
     private Configuration() {
     }
 
+    /**
+     * Singleton class.
+     * @return the only instance.
+     */
     public static Configuration getInstance(){
         if(instance == null) {
             instance = new Configuration();
@@ -33,6 +37,9 @@ public class Configuration implements IPersistable {
         this.maxNewsItems = maxNewsItems;
     }
 
+    /**
+     * @return a byte-array representaion of the object
+     */
     public byte[] getBytes() {
         StringBuffer sb = new StringBuffer();
         sb.append(maxNewsItems);
@@ -41,6 +48,10 @@ public class Configuration implements IPersistable {
         return sb.toString().getBytes();
     }
 
+    /**
+     * Builds the object from a byte array
+     * @param recordData object in form of byte array
+     */
     public void createFromBytes(byte[] recordData) {
         try {
             String recordString = new String(recordData);

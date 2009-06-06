@@ -13,6 +13,7 @@ import javax.microedition.lcdui.Spacer;
 import javax.microedition.lcdui.StringItem;
 
 /**
+ * Form used to show a NewsItem's details
  *
  * @author Anton Dignoes, Omar Moling
  */

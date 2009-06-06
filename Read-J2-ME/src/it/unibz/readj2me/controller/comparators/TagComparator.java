@@ -4,6 +4,7 @@ import it.unibz.readj2me.model.Tag;
 import javax.microedition.rms.RecordComparator;
 
 /**
+ * Comparator to compare Tags
  *
  * @author Anton Dignoes, Omar Moling
  */

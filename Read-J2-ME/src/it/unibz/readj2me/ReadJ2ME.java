@@ -11,6 +11,7 @@ import javax.microedition.midlet.*;
 import javax.microedition.rms.RecordStoreException;
 
 /**
+ * Main MIDlet class.
  *
  * @author Anton Dignoes, Omar Moling
  */
@@ -20,6 +21,9 @@ public class ReadJ2ME extends MIDlet {
     private boolean initialized = false;
     private static ReadJ2ME instance;
 
+    /**
+     * Starts up the MIDlet
+     */
     public void startApp() {
         if (!initialized) {
             instance = this;
@@ -32,6 +36,9 @@ public class ReadJ2ME extends MIDlet {
         }
     }
 
+    /**
+     * Checks for and loads the configuration, if any.
+     */
     private void loadConfiguration() {
         try {
             //load Configuration if any, else default will be loaded
@@ -45,22 +52,41 @@ public class ReadJ2ME extends MIDlet {
         }
     }
 
+    /**
+     * Called when MIDlet is paused, here nothing to be done.
+     */
     public void pauseApp() {
     }
 
+    /**
+     * Called when MIDlet is destroyed, sets display to null and calls notifyDestroyed().
+     * @param unconditional
+     */
     public void destroyApp(boolean unconditional) {
         this.display.setCurrent(null);
         notifyDestroyed();
     }
 
+    /**
+     * Used to show a displayable on the display
+     * @param d the displayable to be shown
+     */
     public static void showOnDisplay(Displayable d) {
         instance.display.setCurrent(d);
     }
 
+    /**
+     * Used internally for exiting the MIDlet.
+     * @param unconditional
+     */
     public static void destroy(boolean unconditional) {
         instance.destroyApp(unconditional);
     }
 
+    /**
+     * Used internally to perform a platform-request
+     * @param url
+     */
     public static void platReq(String url) {
         try {
             if (instance.platformRequest(url)) {

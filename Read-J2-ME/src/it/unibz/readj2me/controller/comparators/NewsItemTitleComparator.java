@@ -4,6 +4,7 @@ import it.unibz.readj2me.model.NewsItem;
 import javax.microedition.rms.RecordComparator;
 
 /**
+ * Comparator to compare NewsItem-records by title
  *
  * @author Anton Dignoes, Omar Moling
  */
@@ -11,6 +12,10 @@ public class NewsItemTitleComparator implements RecordComparator {
 
     private boolean ascending;
 
+    /**
+     * Constructor defines order
+     * @param ascendling true for ascending order
+     */
     public NewsItemTitleComparator(boolean ascendling) {
         this.ascending = ascendling;
     }

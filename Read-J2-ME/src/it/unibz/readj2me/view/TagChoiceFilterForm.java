@@ -11,6 +11,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.rms.RecordStoreException;
 
 /**
+ * Form where the user can select the tags to filter the news by.
  *
  * @author Anton Dignoes, Omar Moling
  */

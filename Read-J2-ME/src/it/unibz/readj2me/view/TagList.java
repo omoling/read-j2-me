@@ -19,6 +19,7 @@ import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 
 /**
+ * List containing all tags.
  *
  * @author Anton Dignoes, Omar Moling
  */

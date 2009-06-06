@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package it.unibz.readj2me.view;
 
 import it.unibz.readj2me.controller.PersistentManager;
@@ -16,6 +11,7 @@ import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 
 /**
+ * Form for viewing and editing the application's configuration.
  *
  * @author Anton Dignoes, Omar Moling
  */

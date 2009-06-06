@@ -1,6 +1,7 @@
 package it.unibz.readj2me.model;
 
 /**
+ * Holds static data like image names, RecordStore names..
  *
  * @author Anton Dignoes, Omar Moling
  */

@@ -9,15 +9,22 @@ import javax.microedition.io.HttpConnection;
 import javax.microedition.io.HttpsConnection;
 
 /**
+ * Class responsible for establishing http and https connections.
  *
  * @author Anton Dignoes, Omar Moling
  */
 public class Networking {
 
     public Networking(){
-
     }
 
+    /**
+     * Gets an inputStream from the specified URL by first saving
+     * the data in memory
+     * @param url the URL to retrieve the data from
+     * @return the data in form of an InputStream
+     * @throws java.io.IOException
+     */
     public InputStream getInputStream(String url) throws IOException {
         HttpConnection conn;
         if (url.startsWith("https")) {
