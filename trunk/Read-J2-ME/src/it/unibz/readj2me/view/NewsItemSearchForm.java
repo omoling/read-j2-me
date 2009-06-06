@@ -6,6 +6,7 @@ import javax.microedition.lcdui.Item;
 import javax.microedition.lcdui.TextField;
 
 /**
+ * Form where the user can specify the search string for searching on news.
  *
  * @author Anton Dignoes, Omar Moling
  */

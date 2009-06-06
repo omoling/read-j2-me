@@ -6,6 +6,7 @@ import java.util.Vector;
 import javax.microedition.rms.RecordFilter;
 
 /**
+ * RecordFilter to filter NewsItems by tags.
  *
  * @author Anton Dignoes, Omar Moling
  */
@@ -13,11 +14,19 @@ public class NewsItemTagFilter implements RecordFilter {
 
     private Vector filterTags;
 
+    /**
+     * Constructor for one Tag.
+     * @param tag
+     */
     public NewsItemTagFilter(Tag tag){
         filterTags = new Vector();
         filterTags.addElement(tag);
     }
 
+    /**
+     * Constructor for a vector of Tags.
+     * @param tags
+     */
     public NewsItemTagFilter(Vector tags) {
         this.filterTags = tags;
     }

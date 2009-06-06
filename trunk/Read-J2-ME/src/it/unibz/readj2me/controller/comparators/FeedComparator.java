@@ -4,6 +4,7 @@ import it.unibz.readj2me.model.Feed;
 import javax.microedition.rms.RecordComparator;
 
 /**
+ * Comparator to compare Feed-records
  *
  * @author Anton Dignoes, Omar Moling
  */

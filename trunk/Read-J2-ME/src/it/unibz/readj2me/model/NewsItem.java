@@ -4,6 +4,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 /**
+ * Represents a News Item
  *
  * @author Anton Dignoes, Omar Moling
  */

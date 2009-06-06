@@ -7,6 +7,7 @@ import javax.microedition.lcdui.Alert;
 import javax.microedition.lcdui.AlertType;
 
 /**
+ * Alert to inform the user about warnings, i.e. the impossibilit to execute a command.
  *
  * @author Anton Dignoes, Omar Moling
  */

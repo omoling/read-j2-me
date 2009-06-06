@@ -26,6 +26,8 @@ import javax.microedition.rms.RecordStoreFullException;
 import org.xmlpull.v1.XmlPullParserException;
 
 /**
+ * List that contains all NewsItems of a Feed and commands for ordering,
+ * updating the feed, ...
  *
  * @author Anton Dignoes, Omar Moling
  */

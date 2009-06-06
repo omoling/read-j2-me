@@ -15,6 +15,8 @@ import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreFullException;
 
 /**
+ * List to show all feeds and also entry point for the user, so it contains
+ * other commands, i.e. to manage tags or edit the configuration.
  *
  * @author Anton Dignoes, Omar Moling
  */
@@ -96,7 +98,7 @@ public class FeedList extends List implements CommandListener {
 
             try {
                 if (c == deleteFeedCommand) {
-                    PersistentManager.getInstance().removeFeed(selectedFeed, true);
+                    PersistentManager.getInstance().removeFeed(selectedFeed);
                     //remove from vector and list
                     items.removeElementAt(index);
                     this.delete(index);
