@@ -211,6 +211,7 @@ public class PersistentManager {
         RecordStore rs = RecordStore.openRecordStore(rsName, false);
         byte[] row = item.getBytes();
         rs.setRecord(item.getRs_id(), row, 0, row.length);
+        rs.closeRecordStore();
     }
 
     /**
@@ -223,6 +224,7 @@ public class PersistentManager {
         RecordStore rs = RecordStore.openRecordStore(Constants.FEED_RS_NAME, false);
         byte[] row = feed.getBytes();
         rs.setRecord(feed.getRs_id(), row, 0, row.length);
+        rs.closeRecordStore();
     }
 
     /**
